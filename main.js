@@ -71,17 +71,13 @@ app.controller("AppCtrl", function ($scope) {
 
 	/* function to get the mean */
 	$scope.getMean = function(arr){
-		console.log("arr: " + arr + " tyepof: " + typeof arr);
-		arr = $scope.toNumberArray(arr);
-		console.log("arr: " + arr + " tyepof: " + typeof arr);
+		//arr = $scope.toNumberArray(arr);
 		sum = $scope.getSumOfValues(arr);
-		console.log("arr: " + arr + " tyepof: " + typeof arr);
-		console.log("sum: " + sum + " tyepof: " + typeof sum);
 		return (sum/arr.length).toFixed(2);
 	}
 	/* function to get the median */
 	$scope.getMedian = function(arr){
-		arr = $scope.toNumberArray(arr);
+		//arr = $scope.toNumberArray(arr);
 		arr.sort( function(a,b) {return a - b;} );
 
 	    var half = Math.floor(arr.length/2);
@@ -92,6 +88,27 @@ app.controller("AppCtrl", function ($scope) {
 	        return (arr[half-1] + arr[half]) / 2.0;
 	}
 	/* function to get the trimmed mean */
+	$scope.getTrimmedMean = function(arr,percent){
+		
+		//arr = $scope.toNumberArray(arr);
+		size = arr.length;
+		percent = percent * 0.01;
+		trim = Math.round(size * percent);
+
+		console.log("arr: " + arr);
+		console.log("size: " + size);
+		console.log("percent: " + percent);
+		console.log("trim: " + trim);
+
+		if(trim !== 0){
+			// remove from the end of the array
+			arr = arr.slice(0,-trim);
+			// remove from the start of the array
+			arr = arr.splice(trim);
+		}
+
+		return $scope.getMean(arr);
+	}
 	/* function to get the winsorized mean */
 
 	/* Highcharts Config */
