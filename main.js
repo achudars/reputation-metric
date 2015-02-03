@@ -87,18 +87,12 @@ app.controller("AppCtrl", function ($scope) {
 	    else
 	        return (arr[half-1] + arr[half]) / 2.0;
 	}
-	/* function to get the trimmed mean */
-	$scope.getTrimmedMean = function(arr,percent){
-		
-		//arr = $scope.toNumberArray(arr);
+
+	$scope.trimArray = function(arr,percent){
+
 		size = arr.length;
 		percent = percent * 0.01;
 		trim = Math.round(size * percent);
-
-		console.log("arr: " + arr);
-		console.log("size: " + size);
-		console.log("percent: " + percent);
-		console.log("trim: " + trim);
 
 		if(trim !== 0){
 			// remove from the end of the array
@@ -106,11 +100,29 @@ app.controller("AppCtrl", function ($scope) {
 			// remove from the start of the array
 			arr = arr.splice(trim);
 		}
-
-		return $scope.getMean(arr);
+		return arr;
 	}
-	/* function to get the winsorized mean */
 
+	/* function to get the trimmed mean */
+	$scope.getTrimmedMean = function(arr,percent){
+		return $scope.getMean($scope.trimArray(arr,percent));
+	}
+	
+	/* function to get the winsorized mean */
+	$scope.getWinsorizedMean = function(arr,percent){
+
+		trimmedArr = $scope.trimArray(arr,percent);
+		first = trimmedArr[0];
+		last = trimmedArr[trimmedArr.length-1];
+		margin = (arr.length - trimmedArr.length)/2;
+
+		for (var i = margin - 1; i >= 0; i--) {
+			trimmedArr.unshift(first);
+			trimmedArr.push(last);
+		};
+		
+		return $scope.getMean(trimmedArr);
+	}
 	/* Highcharts Config */
 	$scope.chartConfig = {
         options: {
