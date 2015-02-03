@@ -12,11 +12,15 @@ app.controller("AppCtrl", function ($scope) {
 	/* data model */
 	$scope.model = {
 		data: "14,7,27,76,258",
-		dataAsNumberArray: "14,7,27,76,258",
+		dataAsNumberArray: [14,7,27,76,258],
 		min: 10,
 		max: 25,
 		expanded: [],
-		total: 0
+		total: 0,
+		selfPromoting : [],
+		slandering : [],
+		selfPromotingMetrics : [],
+		slanderingMetrics : []
 	}
 
 	
@@ -71,13 +75,11 @@ app.controller("AppCtrl", function ($scope) {
 
 	/* function to get the mean */
 	$scope.getMean = function(arr){
-		//arr = $scope.toNumberArray(arr);
-		sum = $scope.getSumOfValues(arr);
+		var sum = $scope.getSumOfValues(arr);
 		return (sum/arr.length).toFixed(2);
 	}
 	/* function to get the median */
 	$scope.getMedian = function(arr){
-		//arr = $scope.toNumberArray(arr);
 		arr.sort( function(a,b) {return a - b;} );
 
 	    var half = Math.floor(arr.length/2);
@@ -90,9 +92,9 @@ app.controller("AppCtrl", function ($scope) {
 
 	$scope.trimArray = function(arr,percent){
 
-		size = arr.length;
-		percent = percent * 0.01;
-		trim = Math.round(size * percent);
+		var size = arr.length;
+		var percent = percent * 0.01;
+		var trim = Math.round(size * percent);
 
 		if(trim !== 0){
 			// remove from the end of the array
@@ -107,14 +109,14 @@ app.controller("AppCtrl", function ($scope) {
 	$scope.getTrimmedMean = function(arr,percent){
 		return $scope.getMean($scope.trimArray(arr,percent));
 	}
-	
+
 	/* function to get the winsorized mean */
 	$scope.getWinsorizedMean = function(arr,percent){
 
-		trimmedArr = $scope.trimArray(arr,percent);
-		first = trimmedArr[0];
-		last = trimmedArr[trimmedArr.length-1];
-		margin = (arr.length - trimmedArr.length)/2;
+		var trimmedArr = $scope.trimArray(arr,percent);
+		var first = trimmedArr[0];
+		var last = trimmedArr[trimmedArr.length-1];
+		var margin = (arr.length - trimmedArr.length)/2;
 
 		for (var i = margin - 1; i >= 0; i--) {
 			trimmedArr.unshift(first);
@@ -123,6 +125,103 @@ app.controller("AppCtrl", function ($scope) {
 		
 		return $scope.getMean(trimmedArr);
 	}
+
+
+	/* function to get an object containing array changes */
+	$scope.makeSelfPromoting = function(){
+		// resetting
+		$scope.model.selfPromoting = [];
+
+		var attackSize = $scope.model.max - $scope.model.min;
+
+		for (var i = 0, vote = $scope.model.min; vote < $scope.model.max; i++, vote++) {
+			var data = new Array();
+			data = $scope.toNumberArray($scope.model.data);
+			data[data.length-1] += vote; // + 10, +11, +12, ..., +25 for LAST VALUE
+			$scope.model.selfPromoting.push({ i : data});
+		};
+
+	}
+
+	/* function to get an object containing array changes */
+	$scope.makeSlandering = function(){
+		// resetting
+		$scope.model.slandering = [];
+
+		var attackSize = $scope.model.max - $scope.model.min;
+
+		for (var i = 0, vote = $scope.model.min; vote < $scope.model.max; i++, vote++) {
+			var data = new Array();
+			data = $scope.toNumberArray($scope.model.data);
+			data[0] += vote; // + 10, +11, +12, ..., +25 for FIRST VALUE
+			$scope.model.slandering.push({ i : data});
+		};
+	}
+
+
+	/* function to get an object containing array changes */
+	$scope.makeSelfPromotingMetrics = function(){
+
+		$scope.makeSelfPromoting();
+		console.log("=================");
+		angular.forEach($scope.model.selfPromoting, function(value, key) {
+
+		 	console.log($scope.model.selfPromoting[key].i);
+		 	$scope.model.expanded = $scope.expand();
+		 	
+		 	var mean = $scope.getMean($scope.model.expanded);
+			var median = $scope.getMedian($scope.model.expanded);
+			var trimFive = $scope.getTrimmedMean($scope.model.expanded,5);
+			var trimTen = $scope.getTrimmedMean($scope.model.expanded,10);
+			var winFive = $scope.getWinsorizedMean($scope.model.expanded,5);
+			var winTen = $scope.getWinsorizedMean($scope.model.expanded,10);
+
+		 	$scope.model.selfPromotingMetrics.push({ key : [mean,median,trimFive,trimTen,winFive,winTen]});
+		});
+		console.log("=================");
+		angular.forEach($scope.model.selfPromotingMetrics, function(value, key) {
+			console.log($scope.model.selfPromotingMetrics[key].key);
+		});
+	}
+
+	/* function to get an object containing array changes */
+	$scope.makeSlanderingMetrics = function(){
+
+		$scope.makeSlandering();
+		console.log("-----------------");
+		angular.forEach($scope.model.slandering, function(value, key) {
+
+		 	console.log($scope.model.slandering[key].i);
+		 	$scope.model.expanded = $scope.expand();
+
+		 	var mean = $scope.getMean($scope.model.expanded);
+			var median = $scope.getMedian($scope.model.expanded);
+			var trimFive = $scope.getTrimmedMean($scope.model.expanded,5);
+			var trimTen = $scope.getTrimmedMean($scope.model.expanded,10);
+			var winFive = $scope.getWinsorizedMean($scope.model.expanded,5);
+			var winTen = $scope.getWinsorizedMean($scope.model.expanded,10);
+			
+		 	$scope.model.slanderingMetrics.push({ key : [mean,median,trimFive,trimTen,winFive,winTen]});
+		});
+		console.log("-----------------");
+		angular.forEach($scope.model.slanderingMetrics, function(value, key) {
+			console.log($scope.model.slanderingMetrics[key].key);
+		});
+	}
+
+	/*angular.forEach($scope.model.selfPromoting, function(value, key) {
+	  console.log($scope.model.selfPromoting[key]);
+	});*/
+
+	// before an attack
+	/*var mean = $scope.getMean($scope.model.expanded);
+	var median = $scope.getMedian($scope.model.expanded);
+	var trimFive = $scope.getTrimmedMean($scope.model.expanded,5);
+	var trimTen = $scope.getTrimmedMean($scope.model.expanded,10);
+	var winFive = $scope.getWinsorizedMean($scope.model.expanded,5);
+	var winTen = $scope.getWinsorizedMean($scope.model.expanded,10);*/
+
+
 	/* Highcharts Config */
 	$scope.chartConfig = {
         options: {
@@ -149,6 +248,10 @@ app.controller("AppCtrl", function ($scope) {
 	 	$scope.model.expanded = $scope.expand();
 	 	$scope.model.total = $scope.arraySize($scope.model.data);
 	 	$scope.chartConfig.series[0].data = $scope.model.expanded;
+	 	//$scope.makeSelfPromoting();
+	 	//$scope.makeSlandering();
+	 	$scope.makeSelfPromotingMetrics();
+	 	$scope.makeSlanderingMetrics();
 	});
 });
 
