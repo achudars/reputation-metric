@@ -1,0 +1,90 @@
+<div class="container">
+
+    <div class='col-lg-12 col-md-12 col-sm-12'>
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h1 class="panel-title">Reputation Metrics</h1>
+            </div>
+            <div class="panel-body">
+                <p>Evaluating the effectiveness of different statistical measures of central tendency as reputation metrics for discrete-valued rating systems.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6 col-md-6 col-sm-6">
+        <form class="well form-horizontal">
+            <fieldset>
+                <legend>Votes</legend>
+                <div class="form-group">
+                    <label for="inputData" class="col-lg-2 control-label">votes</label>
+                    <div class="col-lg-10">
+                        <div class="form-control-wrapper">
+                            <input type="text" id="inputData" name="data" class="form-control empty" ng-model="model.data">
+                            <div class="hint">Enter number values separated by commas</div>
+                            <span class="material-input"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputMin" class="col-lg-2 control-label">min</label>
+                    <div class="col-lg-10">
+                        <div class="form-control-wrapper">
+                            <input placeholder="must be a number" type="number" id="inputMin" name="data" class="form-control empty" ng-model="model.min">
+                            <div class="hint">must be a number</div>
+                            <span class="material-input"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputMax" class="col-lg-2 control-label">max</label>
+                    <div class="col-lg-10">
+                        <div class="form-control-wrapper">
+                            <input placeholder="" type="number" id="inputMax" name="data" class="form-control empty" ng-model="model.max">
+                            <div class="hint">must be a number</div>
+                            <span class="material-input"></span>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+
+    <div class="col-lg-6 col-md-6 col-sm-6">
+        <form class="well form-horizontal">
+            <fieldset>
+                <legend>Max Rate ({{model.total}})</legend>
+                <div ng-repeat="(key, value) in getNumber(model.total) track by $index" ng-init="stars = $index">
+                    <span class="text-right col-lg-2 col-md-2 col-sm-2">{{model.dataAsNumberArray[$index]}}</span>
+                    <span ng-repeat="j in getNumber(stars+1) track by $index">
+                        <i class="mdi-action-grade"></i>
+                    </span>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+
+    <div class="col-lg-12 col-md-12 col-sm-12">
+        <div class="well" style="min-height: 185px;">
+            <div class="col-lg-6 col-md-6 col-sm-6">
+                <div class="breadcrumb"><strong>mean</strong> but it's not super important.</div>
+                <div class="breadcrumb"><strong>5% trimmed mean</strong> but it's not super important.</div>
+                <div class="breadcrumb"><strong>5% winsorized mean</strong> but it's not super important.</div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6">
+                <div class="breadcrumb"><strong>median</strong> but it's not super important.</div>
+                <div class="breadcrumb"><strong>10% trimmed mean</strong> but it's not super important.</div>
+                <div class="breadcrumb"><strong>10% winsorized mean</strong> but it's not super important.</div>
+            </div>
+        </div>
+    </div>
+    
+
+    
+
+    <div class="col-lg-12 col-md-12 col-sm-12">
+        <div class="well">
+            <highchart id="chart1" config="chartConfig"></highchart>
+        </div>
+    </div>
+
+</div>

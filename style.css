@@ -1,0 +1,90 @@
+
+html {
+    height: 100%;
+}
+
+b {
+    color: lime;
+}
+
+h3 {
+    color: orangered;
+    text-align: center;
+}
+
+div.results {
+    background: #FFF;
+    width: 550px;
+    margin: 0 auto;
+    padding: 1em;
+}
+
+strong {
+    color: orangered;
+    text-decoration: underline;
+}
+
+.container {
+    background: #333F4D;
+}
+
+#info h4:first-child {
+    color: #FFF;
+};
+
+#info {
+    width: 550px;
+    margin: 3em auto;
+    background: #333;
+}
+
+#info span {
+    color: lighskyblue;
+    display: inline-block;
+    width: 200px;
+}
+
+#info span + input, #info span + select, #info option {
+    display: inline-block;
+    width: 200px;
+    background: none;
+    color: lightskyblue;
+    border: none;
+}
+
+#info span + select {
+    margin-left: -4px;
+    height: 100%;
+}
+
+#query-container {
+    text-align: center;
+}
+
+input[type="search"] {
+    padding: 1em;
+    margin: 5em auto;
+    width: 500px;
+    border: none;
+    border-top-left-radius: 2px;
+    border-bottom-left-radius: 2px;
+}
+
+button[type="submit"] {
+    border: none;
+    outline: none;
+    vertical-align: baseline;
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
+}
+
+ul.dropdown-menu {
+    width: 550px;
+    text-align: left;
+    margin-left: 2px;
+}
+
+pre {
+    width: 550px;
+    margin: 0 auto;
+}
