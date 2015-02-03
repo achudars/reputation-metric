@@ -9,6 +9,7 @@ app.config(function ($routeProvider) {
 
 app.controller("AppCtrl", function ($scope) {
 
+	/* data model */
 	$scope.model = {
 		data: "14,7,27,76,258",
 		dataAsNumberArray: "14,7,27,76,258",
@@ -19,56 +20,70 @@ app.controller("AppCtrl", function ($scope) {
 	}
 
 	
-
+	/* function to get the size of an array from the input */
 	$scope.arraySize = function(data) {
-		
 		var numberArray = $scope.toNumberArray(data);
-
 		// in case the string ends with a comma
 		if (isNaN(numberArray[numberArray.length-1])){
 			return (numberArray.length-1);
 		}
-
 		return numberArray.length;
-
 	};
 
+	/* function to tranform text string into a number array */
 	$scope.toNumberArray = function(data){
-
 		var numberArray = new Array();
-
 		numberArray = data.split(",");
-
 		for (a in numberArray ) {
 		    numberArray[a] = parseInt(numberArray[a], 10);
 		}
-
 		return numberArray;
 	}
 
-
+	/* function to get numbered values for ngRepeat */
 	$scope.getNumber = function(num) {
 	    return new Array(num);   
 	}
 
-	
-
+	/* function to expand the initial input into full distribution */
 	$scope.expand = function(){
 		var dataLength = $scope.toNumberArray($scope.model.data).length;
 		var dataElements = $scope.toNumberArray($scope.model.data);
 		var testArray = new Array();
-
 		for (var i = 0; i < dataLength; i++) {
 			var times = dataElements[i];
 			for (var j = 1; j <= times; j++) {
 				testArray.push(i+1);
 			};
 		};
-
 		return testArray;
 	}
 
+	/* function to return the sum of all values */
+	$scope.getSumOfValues = function(arr){
+		var total = 0;
+		$.each(arr,function() {
+	    	total += this;
+		});
+		return total;
+	}
+	
 
+	/* function to get the mean */
+	$scope.getMean = function(arr){
+		console.log("arr: " + arr + " tyepof: " + typeof arr);
+		arr = $scope.toNumberArray(arr);
+		console.log("arr: " + arr + " tyepof: " + typeof arr);
+		sum = $scope.getSumOfValues(arr);
+		console.log("arr: " + arr + " tyepof: " + typeof arr);
+		console.log("sum: " + sum + " tyepof: " + typeof sum);
+		return (sum/arr.length).toFixed(2);
+	}
+	/* function to get the median */
+	/* function to get the trimmed mean */
+	/* function to get the winsorized mean */
+
+	/* Highcharts Config */
 	$scope.chartConfig = {
         options: {
             chart: {
@@ -88,11 +103,11 @@ app.controller("AppCtrl", function ($scope) {
 		}
     }
 
+    /* Watchers for changes */
     $scope.$watchCollection('model.data', function(newNames, oldNames) {
 		$scope.model.dataAsNumberArray = $scope.toNumberArray($scope.model.data);
 	 	$scope.model.expanded = $scope.expand();
 	 	$scope.model.total = $scope.arraySize($scope.model.data);
-	 	//$scope.chartConfig.series[0].data = $scope.toNumberArray($scope.model.data);
 	 	$scope.chartConfig.series[0].data = $scope.model.expanded;
 	});
 });
