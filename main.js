@@ -80,6 +80,17 @@ app.controller("AppCtrl", function ($scope) {
 		return (sum/arr.length).toFixed(2);
 	}
 	/* function to get the median */
+	$scope.getMedian = function(arr){
+		arr = $scope.toNumberArray(arr);
+		arr.sort( function(a,b) {return a - b;} );
+
+	    var half = Math.floor(arr.length/2);
+
+	    if(arr.length % 2)
+	        return arr[half];
+	    else
+	        return (arr[half-1] + arr[half]) / 2.0;
+	}
 	/* function to get the trimmed mean */
 	/* function to get the winsorized mean */
 
