@@ -17,10 +17,14 @@ app.controller("AppCtrl", function ($scope) {
 		max: 25,
 		expanded: [],
 		total: 0,
-		selfPromoting : [],
-		slandering : [],
-		selfPromotingMetrics : [],
-		slanderingMetrics : []
+		spInput : [],
+		slInput : [],
+		spExpandedInput : [],
+		slExpandedInput : [],
+		spMetrics : [],
+		slMetrics : [],
+		spMetricDiffs : [],
+		slMetricDiffs : []
 	}
 
 	
@@ -50,17 +54,22 @@ app.controller("AppCtrl", function ($scope) {
 	}
 
 	/* function to expand the initial input into full distribution */
-	$scope.expand = function(){
-		var dataLength = $scope.toNumberArray($scope.model.data).length;
-		var dataElements = $scope.toNumberArray($scope.model.data);
-		var testArray = new Array();
+	$scope.expand = function(arr){
+		//var dataLength = $scope.toNumberArray($scope.model.data).length;
+		//var dataElements = $scope.toNumberArray($scope.model.data);
+
+		var dataLength = arr.length;
+		var dataElements = arr;
+
+		var expandedArray = new Array();
+
 		for (var i = 0; i < dataLength; i++) {
 			var times = dataElements[i];
 			for (var j = 1; j <= times; j++) {
-				testArray.push(i+1);
+				expandedArray.push(i+1);
 			};
 		};
-		return testArray;
+		return expandedArray;
 	}
 
 	/* function to return the sum of all values */
@@ -76,7 +85,9 @@ app.controller("AppCtrl", function ($scope) {
 	/* function to get the mean */
 	$scope.getMean = function(arr){
 		var sum = $scope.getSumOfValues(arr);
-		return (sum/arr.length).toFixed(2);
+		// must be Number(), otherwise will be a string
+		// toFixed() regulates decimal places
+		return Number((sum/arr.length).toFixed(2));
 	}
 	/* function to get the median */
 	$scope.getMedian = function(arr){
@@ -127,100 +138,168 @@ app.controller("AppCtrl", function ($scope) {
 	}
 
 
-	/* function to get an object containing array changes */
-	$scope.makeSelfPromoting = function(){
+	$scope.transpose = function(a) {
+
+	  // Calculate the width and height of the Array
+	  var w = a.length ? a.length : 0,
+	    h = a[0] instanceof Array ? a[0].length : 0;
+
+	  // In case it is a zero matrix, no transpose routine needed.
+	  if(h === 0 || w === 0) { return []; }
+
+	  /**
+	   * @var {Number} i Counter
+	   * @var {Number} j Counter
+	   * @var {Array} t Transposed data is stored in this array.
+	   */
+	  var i, j, t = [];
+
+	  // Loop through every item in the outer array (height)
+	  for(i=0; i<h; i++) {
+
+	    // Insert a new row (array)
+	    t[i] = [];
+
+	    // Loop through every item per item in outer array (width)
+	    for(j=0; j<w; j++) {
+
+	      // Save transposed data.
+	      t[i][j] = a[j][i];
+	    }
+	  }
+
+	  return t;
+	};
+
+
+
+
+
+
+	/* STEP 1 */
+	$scope.makeInputsWithAttacks = function(){
 		// resetting
-		$scope.model.selfPromoting = [];
+		$scope.model.spInput = {};
+		$scope.model.slInput = {};
 
 		var attackSize = $scope.model.max - $scope.model.min;
 
-		for (var i = 0, vote = $scope.model.min; vote < $scope.model.max; i++, vote++) {
-			var data = new Array();
-			data = $scope.toNumberArray($scope.model.data);
-			data[data.length-1] += vote; // + 10, +11, +12, ..., +25 for LAST VALUE
-			$scope.model.selfPromoting.push({ i : data});
+		for (var i = 0, votes = $scope.model.min; votes < $scope.model.max; i++, votes++) {
+			var spData = new Array();
+			var slData = new Array();
+
+			    spData = $scope.toNumberArray($scope.model.data);
+			    slData = $scope.toNumberArray($scope.model.data);
+			    
+			    spData[spData.length-1] += votes; // self-promoting votes
+			    slData[0] += votes;				  // slandering votes	
+
+			$scope.model.spInput[i] = spData;
+			$scope.model.slInput[i] = slData;
 		};
+
+		console.log("================= STEP 1 =================");
+		/*angular.forEach($scope.model.spInput, function(value, key) {
+			console.log($scope.model.spInput[key]);
+			console.log($scope.model.slInput[key]);
+		});*/
 
 	}
 
-	/* function to get an object containing array changes */
-	$scope.makeSlandering = function(){
-		// resetting
-		$scope.model.slandering = [];
+	/* STEP 2 */
+	$scope.makeExpandedInputsWithAttacks = function(){
 
-		var attackSize = $scope.model.max - $scope.model.min;
+		$scope.makeInputsWithAttacks();
 
-		for (var i = 0, vote = $scope.model.min; vote < $scope.model.max; i++, vote++) {
-			var data = new Array();
-			data = $scope.toNumberArray($scope.model.data);
-			data[0] += vote; // + 10, +11, +12, ..., +25 for FIRST VALUE
-			$scope.model.slandering.push({ i : data});
-		};
-	}
+		angular.forEach($scope.model.spInput, function(value, key) {
 
-
-	/* function to get an object containing array changes */
-	$scope.makeSelfPromotingMetrics = function(){
-
-		$scope.makeSelfPromoting();
-		console.log("=================");
-		angular.forEach($scope.model.selfPromoting, function(value, key) {
-
-		 	console.log($scope.model.selfPromoting[key].i);
-		 	$scope.model.expanded = $scope.expand();
+		 	//$scope.model.expanded = $scope.expand();
 		 	
-		 	var mean = $scope.getMean($scope.model.expanded);
+		 	$scope.model.spExpandedInput[key] = $scope.expand($scope.model.spInput[key]);
+		 	$scope.model.slExpandedInput[key] = $scope.expand($scope.model.slInput[key]);
+
+		 	/*var mean = $scope.getMean($scope.model.expanded);
 			var median = $scope.getMedian($scope.model.expanded);
 			var trimFive = $scope.getTrimmedMean($scope.model.expanded,5);
 			var trimTen = $scope.getTrimmedMean($scope.model.expanded,10);
 			var winFive = $scope.getWinsorizedMean($scope.model.expanded,5);
 			var winTen = $scope.getWinsorizedMean($scope.model.expanded,10);
 
-		 	$scope.model.selfPromotingMetrics.push({ key : [mean,median,trimFive,trimTen,winFive,winTen]});
+		 	$scope.model.spExpandedInput[key] = [mean,median,trimFive,trimTen,winFive,winTen];
+		 	$scope.model.spExpandedInput[key] = [mean,median,trimFive,trimTen,winFive,winTen];*/
 		});
-		console.log("=================");
-		angular.forEach($scope.model.selfPromotingMetrics, function(value, key) {
-			console.log($scope.model.selfPromotingMetrics[key].key);
-		});
+ 
+		console.log("================= STEP 2 =================");
+		/*angular.forEach($scope.model.spExpandedInput, function(value, key) {
+			console.log($scope.model.spExpandedInput[key]);
+			console.log($scope.model.slExpandedInput[key]);
+		});*/
 	}
 
-	/* function to get an object containing array changes */
-	$scope.makeSlanderingMetrics = function(){
+	/* STEP 3 */
+	$scope.makeMetricsOnExpandedInputsWithAttacks = function(){
 
-		$scope.makeSlandering();
-		console.log("-----------------");
-		angular.forEach($scope.model.slandering, function(value, key) {
+		$scope.makeExpandedInputsWithAttacks();
 
-		 	console.log($scope.model.slandering[key].i);
-		 	$scope.model.expanded = $scope.expand();
+		angular.forEach($scope.model.spExpandedInput, function(value, key) {
 
-		 	var mean = $scope.getMean($scope.model.expanded);
-			var median = $scope.getMedian($scope.model.expanded);
-			var trimFive = $scope.getTrimmedMean($scope.model.expanded,5);
-			var trimTen = $scope.getTrimmedMean($scope.model.expanded,10);
-			var winFive = $scope.getWinsorizedMean($scope.model.expanded,5);
-			var winTen = $scope.getWinsorizedMean($scope.model.expanded,10);
-			
-		 	$scope.model.slanderingMetrics.push({ key : [mean,median,trimFive,trimTen,winFive,winTen]});
+		 	var spMean = $scope.getMean($scope.model.spExpandedInput[key]);
+			var spMedian = $scope.getMedian($scope.model.spExpandedInput[key]);
+			var spTrimFive = $scope.getTrimmedMean($scope.model.spExpandedInput[key],5);
+			var spTrimTen = $scope.getTrimmedMean($scope.model.spExpandedInput[key],10);
+			var spWinFive = $scope.getWinsorizedMean($scope.model.spExpandedInput[key],5);
+			var spWinTen = $scope.getWinsorizedMean($scope.model.spExpandedInput[key],10);
+
+			var slMean = $scope.getMean($scope.model.slExpandedInput[key]);
+			var slMedian = $scope.getMedian($scope.model.slExpandedInput[key]);
+			var slTrimFive = $scope.getTrimmedMean($scope.model.slExpandedInput[key],5);
+			var slTrimTen = $scope.getTrimmedMean($scope.model.slExpandedInput[key],10);
+			var slWinFive = $scope.getWinsorizedMean($scope.model.slExpandedInput[key],5);
+			var slWinTen = $scope.getWinsorizedMean($scope.model.slExpandedInput[key],10);
+
+		 	$scope.model.spMetrics[key] = [spMean,spMedian,spTrimFive,spTrimTen,spWinFive,spWinTen];
+		 	$scope.model.slMetrics[key] = [slMean,slMedian,slTrimFive,slTrimTen,slWinFive,slWinTen];
 		});
-		console.log("-----------------");
-		angular.forEach($scope.model.slanderingMetrics, function(value, key) {
-			console.log($scope.model.slanderingMetrics[key].key);
-		});
+ 
+		console.log("================= STEP 3 =================");
+		/*angular.forEach($scope.model.spMetrics, function(value, key) {
+			console.log($scope.model.spMetrics[key]);
+			console.log($scope.model.slMetrics[key]);
+		});*/
 	}
 
-	/*angular.forEach($scope.model.selfPromoting, function(value, key) {
-	  console.log($scope.model.selfPromoting[key]);
-	});*/
+	/* STEP 4 */
+	$scope.makeDiffsForMetrics = function(min,max){
+		$scope.model.spMetricDiff = [];
+		$scope.model.slMetricDiff = [];
+		$scope.makeMetricsOnExpandedInputsWithAttacks();
 
-	// before an attack
-	/*var mean = $scope.getMean($scope.model.expanded);
-	var median = $scope.getMedian($scope.model.expanded);
-	var trimFive = $scope.getTrimmedMean($scope.model.expanded,5);
-	var trimTen = $scope.getTrimmedMean($scope.model.expanded,10);
-	var winFive = $scope.getWinsorizedMean($scope.model.expanded,5);
-	var winTen = $scope.getWinsorizedMean($scope.model.expanded,10);*/
+		var size = $scope.model.spMetrics[0].length; // as we have 6 metrics, this will be 6
 
+		var spMetricsTransposed = $scope.transpose($scope.model.spMetrics);
+		var slMetricsTransposed = $scope.transpose($scope.model.slMetrics);
+
+		angular.forEach(spMetricsTransposed, function(value, key) {
+			var spTempArray = new Array();
+			var slTempArray = new Array();
+
+			for (var i = 0; i < (spMetricsTransposed[key].length-1); i++) {
+
+				var spDiff = Number((spMetricsTransposed[key][i]-spMetricsTransposed[key][i+1]).toFixed(2));
+				var slDiff = Number((slMetricsTransposed[key][i]-slMetricsTransposed[key][i+1]).toFixed(2));
+				spTempArray.push(spDiff);
+				slTempArray.push(slDiff);
+			}
+			$scope.model.spMetricDiff[key] = spTempArray; // 6 array with diffs
+			$scope.model.slMetricDiff[key] = slTempArray; // 6 array with diffs
+		});
+ 
+		console.log("================= STEP 4 =================");
+		/*angular.forEach($scope.model.spMetricDiff, function(value, key) {
+			console.log($scope.model.spMetricDiff[key]);
+			console.log($scope.model.slMetricDiff[key]);
+		});*/
+	}
 
 	/* Highcharts Config */
 	$scope.chartConfig = {
@@ -245,13 +324,16 @@ app.controller("AppCtrl", function ($scope) {
     /* Watchers for changes */
     $scope.$watchCollection('model.data', function(newNames, oldNames) {
 		$scope.model.dataAsNumberArray = $scope.toNumberArray($scope.model.data);
-	 	$scope.model.expanded = $scope.expand();
+	 	//$scope.model.expanded = $scope.expand();
 	 	$scope.model.total = $scope.arraySize($scope.model.data);
-	 	$scope.chartConfig.series[0].data = $scope.model.expanded;
+	 	$scope.chartConfig.series[0].data = $scope.toNumberArray($scope.model.data);
 	 	//$scope.makeSelfPromoting();
 	 	//$scope.makeSlandering();
-	 	$scope.makeSelfPromotingMetrics();
-	 	$scope.makeSlanderingMetrics();
+	 	//$scope.makeSelfPromotingMetrics();
+	 	//$scope.makeSlanderingMetrics();
+	 	//$scope.makeExpandedInputsWithAttacks();
+	 	//$scope.makeMetricsOnExpandedInputsWithAttacks();
+	 	$scope.makeDiffsForMetrics($scope.model.min,$scope.model.max);
 	});
 });
 
