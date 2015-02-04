@@ -281,7 +281,6 @@ app.controller("AppCtrl", function ($scope) {
 		});
  
 		console.log("================= STEP 4 =================");
-		console.log($scope.model.slMetricDiff[0]);
 		/*angular.forEach($scope.model.spMetricDiff, function(value, key) {
 			console.log($scope.model.spMetricDiff[key]);
 			console.log($scope.model.slMetricDiff[key]);
@@ -299,63 +298,33 @@ app.controller("AppCtrl", function ($scope) {
     }
 
     $scope.chartConfig03 = { options: {chart: {type: 'line'}}, series: [{ name: "trimmed at 5%: self-promoting", data: 0 },{ name: "trimmed at 5%: slandering", data: 0 }],
-        title: {text: 'MEDIAN: self-promoting'},
+        title: {text: 'trimmed at 5%'},
 		xAxis: {startOnTick: false,title: {text: 'values'}}
     }
     $scope.chartConfig04 = { options: {chart: {type: 'line'}}, series: [{ name: "trimmed at 10%: self-promoting", data: 0 },{ name: "trimmed at 10%: slandering", data: 0 }],
-        title: {text: 'MEDIAN: slandering'},
+        title: {text: 'trimmed at 10%'},
 		xAxis: {startOnTick: false,title: {text: 'values'}}
     }
 
     $scope.chartConfig05 = { options: {chart: {type: 'line'}}, series: [{ name: "winsorized at 5%: self-promoting", data: 0 },{ name: "winsorized at 5%: slandering", data: 0 }],
-        title: {text: 'TRIMMED MEAN 5%: self-promoting'},
+        title: {text: 'winsorized at 5%'},
 		xAxis: {startOnTick: false,title: {text: 'values'}}
     }
     $scope.chartConfig06 = { options: {chart: {type: 'line'}}, series: [{ name: "winsorized at 10%: self-promoting", data: 0 },{ name: "winsorized at 10%: slandering", data: 0 }],
-        title: {text: 'TRIMMED MEAN 5%: slandering'},
+        title: {text: 'winsorized at 10%'},
 		xAxis: {startOnTick: false,title: {text: 'values'}}
     }
-
-    /*$scope.chartConfig07 = { options: {chart: {type: 'line'}}, series: [{ data: 0 }],
-        title: {text: 'TRIMMED MEAN 10%: self-promoting'},
-		xAxis: {startOnTick: false,title: {text: 'values'}}
-    }
-    $scope.chartConfig08 = { options: {chart: {type: 'line'}}, series: [{ data: 0 }],
-        title: {text: 'TRIMMED MEAN 10%: slandering'},
-		xAxis: {startOnTick: false,title: {text: 'values'}}
-    }
-
-    $scope.chartConfig09 = { options: {chart: {type: 'line'}}, series: [{ data: 0 }],
-        title: {text: 'WINSORIZED MEAN 5%: self-promoting'},
-		xAxis: {startOnTick: false,title: {text: 'values'}}
-    }
-    $scope.chartConfig10 = { options: {chart: {type: 'line'}}, series: [{ data: 0 }],
-        title: {text: 'WINSORIZED MEAN 5%: slandering'},
-		xAxis: {startOnTick: false,title: {text: 'values'}}
-    }
-
-    $scope.chartConfig11 = { options: {chart: {type: 'line'}}, series: [{ data: 0 }],
-        title: {text: 'WINSORIZED MEAN 10%: self-promoting'},
-		xAxis: {startOnTick: false,title: {text: 'values'}}
-    }
-    $scope.chartConfig12 = { options: {chart: {type: 'line'}}, series: [{ data: 0 }],
-        title: {text: 'WINSORIZED MEAN 10%: slandering'},
-		xAxis: {startOnTick: false,title: {text: 'values'}}
-    }*/
 
     /* Watchers for changes */
-    $scope.$watchCollection('model.data', function(newNames, oldNames) {
+    $scope.$watchGroup(['model.data','model.min','model.max'], function(newNames, oldNames) {
+
+    	if ($scope.model.min >= $scope.model.max) {
+    		$scope.model.max += 1;
+    	}
+
 		$scope.model.dataAsNumberArray = $scope.toNumberArray($scope.model.data);
-	 	//$scope.model.expanded = $scope.expand();
 	 	$scope.model.total = $scope.arraySize($scope.model.data);
 	 	
-	 	
-	 	//$scope.makeSelfPromoting();
-	 	//$scope.makeSlandering();
-	 	//$scope.makeSelfPromotingMetrics();
-	 	//$scope.makeSlanderingMetrics();
-	 	//$scope.makeExpandedInputsWithAttacks();
-	 	//$scope.makeMetricsOnExpandedInputsWithAttacks();
 	 	$scope.makeDiffsForMetrics($scope.model.min,$scope.model.max);
 
 	 	$scope.chartConfig01.series[0].data = $scope.model.spMetricDiff[0];
@@ -375,20 +344,6 @@ app.controller("AppCtrl", function ($scope) {
 
 	 	$scope.chartConfig06.series[0].data = $scope.model.spMetricDiff[5];
 	 	$scope.chartConfig06.series[1].data = $scope.model.slMetricDiff[5];
-
-
-	 	/*$scope.chartConfig03.series[0].data = $scope.model.spMetricDiff[1];
-	 	$scope.chartConfig04.series[0].data = $scope.model.slMetricDiff[1];
-
-	 	$scope.chartConfig05.series[0].data = $scope.model.spMetricDiff[2];
-	 	$scope.chartConfig06.series[0].data = $scope.model.slMetricDiff[2];
-	 	$scope.chartConfig07.series[0].data = $scope.model.spMetricDiff[3];
-	 	$scope.chartConfig08.series[0].data = $scope.model.slMetricDiff[3];
-
-	 	$scope.chartConfig09.series[0].data = $scope.model.spMetricDiff[4];
-	 	$scope.chartConfig10.series[0].data = $scope.model.slMetricDiff[4];
-	 	$scope.chartConfig11.series[0].data = $scope.model.spMetricDiff[5];
-	 	$scope.chartConfig12.series[0].data = $scope.model.slMetricDiff[5];*/
 	});
 });
 
