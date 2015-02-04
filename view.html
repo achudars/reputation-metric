@@ -13,7 +13,7 @@
     </div>
 
     <div class="col-lg-12 col-md-12 col-sm-12">
-        <div class="col-lg-4 col-md-4 col-sm-4">
+        <div class="col-lg-3 col-md-3 col-sm-3">
             <form class="form-horizontal">
                 <fieldset>
                     <legend>Votes</legend>
@@ -22,7 +22,7 @@
                         <div class="col-lg-10">
                             <div class="form-control-wrapper">
                                 <input type="text" id="inputData" name="data" class="form-control empty" ng-model="model.data">
-                                <div class="hint">Enter number values separated by commas</div>
+                                <div class="hint">Enter values separated by commas</div>
                                 <span class="material-input"></span>
                             </div>
                         </div>
@@ -31,7 +31,7 @@
                         <label for="inputMin" class="col-lg-2 control-label">min</label>
                         <div class="col-lg-10">
                             <div class="form-control-wrapper">
-                                <input placeholder="must be a number" type="number" id="inputMin" name="data" class="form-control empty" ng-model="model.min">
+                                <input placeholder="must be a number" type="number" id="inputMin" name="data" class="form-control empty" ng-model="model.magnitude.min">
                                 <div class="hint">must be a number</div>
                                 <span class="material-input"></span>
                             </div>
@@ -41,7 +41,7 @@
                         <label for="inputMax" class="col-lg-2 control-label">max</label>
                         <div class="col-lg-10">
                             <div class="form-control-wrapper">
-                                <input placeholder="" type="number" id="inputMax" name="data" class="form-control empty" ng-model="model.max">
+                                <input placeholder="" type="number" id="inputMax" name="data" class="form-control empty" ng-model="model.magnitude.max">
                                 <div class="hint">must be a number</div>
                                 <span class="material-input"></span>
                             </div>
@@ -50,7 +50,32 @@
                 </fieldset>
             </form>
         </div>
-        <div class="col-lg-4 col-md-4 col-sm-4">
+        <div class="col-lg-3 col-md-3 col-sm-3">
+            <form class="form-horizontal">
+                <fieldset>
+                    <legend>Magnitude</legend>
+                    <div class="radio radio-success">
+                      <label>
+                        <input type="radio" ng-model="model.magnitude" name="magnitude" ng-value="{ min: 5, max: 10 }" value="small" checked=""><span class="circle"></span><span class="check"></span>
+                        small
+                      </label>
+                    </div>
+                    <div class="radio radio-success">
+                      <label>
+                        <input type="radio" ng-model="model.magnitude" name="magnitude" ng-value="{ min: 20, max: 40 }" value="medium"><span class="circle"></span><span class="check"></span>
+                        medium
+                      </label>
+                    </div>
+                    <div class="radio radio-success">
+                      <label>
+                        <input type="radio" ng-model="model.magnitude" name="magnitude" ng-value="{ min: 100, max: 200 }" value="large"><span class="circle"></span><span class="check"></span>
+                        large
+                      </label>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-3">
             <form class="form-horizontal">
                 <fieldset>
                     <legend>Max Rate ({{model.total}})</legend>
@@ -63,7 +88,7 @@
                 </fieldset>
             </form>
         </div>
-        <div class="col-lg-4 col-md-4 col-sm-4">
+        <div class="col-lg-3 col-md-3 col-sm-3">
             <form class="form-horizontal">
                 <fieldset>
                     <legend>2-line input for non-optimal usage</legend>

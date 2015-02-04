@@ -12,8 +12,7 @@ app.controller("AppCtrl", function ($scope) {
 	$scope.model = {
 		data: "4,30,200,706,60",
 		dataAsNumberArray: [4,30,200,706,60],
-		min: 100,
-		max: 200,
+		magnitude: { min: 100, max: 200 },
 		expanded: [],
 		total: 0,
 		spInput : [],
@@ -24,7 +23,7 @@ app.controller("AppCtrl", function ($scope) {
 		slMetrics : [],
 		spMetricDiffs : [],
 		slMetricDiffs : [],
-		raw: "asdas"
+		raw: ""
 	}
 
 	
@@ -176,9 +175,9 @@ app.controller("AppCtrl", function ($scope) {
 		$scope.model.spInput = {};
 		$scope.model.slInput = {};
 
-		var attackSize = $scope.model.max - $scope.model.min;
+		var attackSize = $scope.model.max - $scope.model.magnitude.min;
 
-		for (var i = 0, votes = $scope.model.min; votes < $scope.model.max; i++, votes++) {
+		for (var i = 0, votes = $scope.model.magnitude.min; votes < $scope.model.magnitude.max; i++, votes++) {
 			var spData = new Array();
 			var slData = new Array();
 
@@ -283,7 +282,7 @@ app.controller("AppCtrl", function ($scope) {
 	}
 
 	$scope.handleRawInput = function(){
-		$scope.model.raw = (""+$scope.model.total +","+ $scope.model.data +"\n"+ $scope.model.min +","+ $scope.model.max);
+		$scope.model.raw = (""+$scope.model.total +","+ $scope.model.data +"\n"+ $scope.model.magnitude.min +","+ $scope.model.magnitude.max);
 	}
 
 	/* Highcharts Config */
@@ -321,18 +320,18 @@ app.controller("AppCtrl", function ($scope) {
     }
 
     /* Watchers for changes */
-    $scope.$watchGroup(['model.data','model.min','model.max','model.total'], function(newNames, oldNames) {
+    $scope.$watchGroup(['model.data','model.magnitude.min','model.magnitude.max','model.total'], function(newNames, oldNames) {
 
     	$scope.model.total = $scope.arraySize($scope.model.data);
 
-    	if ($scope.model.min >= $scope.model.max) {
-    		$scope.model.max += 1;
+    	if ($scope.model.magnitude.min >= $scope.model.magnitude.max) {
+    		$scope.model.magnitude.max += 1;
     	}
 
 		$scope.model.dataAsNumberArray = $scope.toNumberArray($scope.model.data);
 	 	$scope.handleRawInput();
 	 		
-	 	$scope.makeDiffsForMetrics($scope.model.min,$scope.model.max);
+	 	$scope.makeDiffsForMetrics($scope.model.magnitude.min,$scope.model.magnitude.max);
 
 	 	$scope.chartConfig01.series[0].data = $scope.model.spMetricDiff[0];
 	 	$scope.chartConfig01.series[1].data = $scope.model.slMetricDiff[0];
