@@ -10,10 +10,10 @@ app.controller("AppCtrl", function ($scope) {
 
 	/* data model */
 	$scope.model = {
-		data: "14,7,27,76,258",
-		dataAsNumberArray: [14,7,27,76,258],
-		min: 10,
-		max: 25,
+		data: "4,30,200,706,60",
+		dataAsNumberArray: [4,30,200,706,60],
+		min: 100,
+		max: 200,
 		expanded: [],
 		total: 0,
 		spInput : [],
