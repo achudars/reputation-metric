@@ -2,8 +2,7 @@ var app = angular.module("app", ['ngRoute','highcharts-ng']);
 
 app.config(function ($routeProvider) {
 	$routeProvider.when("/", {
-		templateUrl: "view.html",
-		controller: "AppCtrl"
+		templateUrl: "view.html"
 	})
 });
 
@@ -212,21 +211,8 @@ app.controller("AppCtrl", function ($scope) {
 		$scope.makeInputsWithAttacks();
 
 		angular.forEach($scope.model.spInput, function(value, key) {
-
-		 	//$scope.model.expanded = $scope.expand();
-		 	
 		 	$scope.model.spExpandedInput[key] = $scope.expand($scope.model.spInput[key]);
 		 	$scope.model.slExpandedInput[key] = $scope.expand($scope.model.slInput[key]);
-
-		 	/*var mean = $scope.getMean($scope.model.expanded);
-			var median = $scope.getMedian($scope.model.expanded);
-			var trimFive = $scope.getTrimmedMean($scope.model.expanded,5);
-			var trimTen = $scope.getTrimmedMean($scope.model.expanded,10);
-			var winFive = $scope.getWinsorizedMean($scope.model.expanded,5);
-			var winTen = $scope.getWinsorizedMean($scope.model.expanded,10);
-
-		 	$scope.model.spExpandedInput[key] = [mean,median,trimFive,trimTen,winFive,winTen];
-		 	$scope.model.spExpandedInput[key] = [mean,median,trimFive,trimTen,winFive,winTen];*/
 		});
  
 		console.log("================= STEP 2 =================");
@@ -295,6 +281,7 @@ app.controller("AppCtrl", function ($scope) {
 		});
  
 		console.log("================= STEP 4 =================");
+		console.log($scope.model.slMetricDiff[0]);
 		/*angular.forEach($scope.model.spMetricDiff, function(value, key) {
 			console.log($scope.model.spMetricDiff[key]);
 			console.log($scope.model.slMetricDiff[key]);
@@ -302,31 +289,67 @@ app.controller("AppCtrl", function ($scope) {
 	}
 
 	/* Highcharts Config */
-	$scope.chartConfig = {
-        options: {
-            chart: {
-                type: 'column'
-            }
-        },
-        series: [{
-            data: $scope.toNumberArray($scope.model.data)
-        }],
-        title: {
-            text: 'Hello'
-        },
-		xAxis: {
-			minRange: 1,
-			startOnTick: false,
-			title: {text: 'values'}
-		}
+	$scope.chartConfig01 = { options: {chart: {type: 'line'}}, series: [{ name: "mean: self-promoting", data: 0 },{ name: "mean: slandering", data: 0 }],
+        title: {text: 'mean'},
+		xAxis: {startOnTick: false,title: {text: 'values'}}
     }
+    $scope.chartConfig02 = { options: {chart: {type: 'line'}}, series: [{ name: "median: self-promoting", data: 0 },{ name: "median: slandering", data: 0 }],
+        title: {text: 'median'},
+		xAxis: {startOnTick: false,title: {text: 'values'}}
+    }
+
+    $scope.chartConfig03 = { options: {chart: {type: 'line'}}, series: [{ name: "trimmed at 5%: self-promoting", data: 0 },{ name: "trimmed at 5%: slandering", data: 0 }],
+        title: {text: 'MEDIAN: self-promoting'},
+		xAxis: {startOnTick: false,title: {text: 'values'}}
+    }
+    $scope.chartConfig04 = { options: {chart: {type: 'line'}}, series: [{ name: "trimmed at 10%: self-promoting", data: 0 },{ name: "trimmed at 10%: slandering", data: 0 }],
+        title: {text: 'MEDIAN: slandering'},
+		xAxis: {startOnTick: false,title: {text: 'values'}}
+    }
+
+    $scope.chartConfig05 = { options: {chart: {type: 'line'}}, series: [{ name: "winsorized at 5%: self-promoting", data: 0 },{ name: "winsorized at 5%: slandering", data: 0 }],
+        title: {text: 'TRIMMED MEAN 5%: self-promoting'},
+		xAxis: {startOnTick: false,title: {text: 'values'}}
+    }
+    $scope.chartConfig06 = { options: {chart: {type: 'line'}}, series: [{ name: "winsorized at 10%: self-promoting", data: 0 },{ name: "winsorized at 10%: slandering", data: 0 }],
+        title: {text: 'TRIMMED MEAN 5%: slandering'},
+		xAxis: {startOnTick: false,title: {text: 'values'}}
+    }
+
+    /*$scope.chartConfig07 = { options: {chart: {type: 'line'}}, series: [{ data: 0 }],
+        title: {text: 'TRIMMED MEAN 10%: self-promoting'},
+		xAxis: {startOnTick: false,title: {text: 'values'}}
+    }
+    $scope.chartConfig08 = { options: {chart: {type: 'line'}}, series: [{ data: 0 }],
+        title: {text: 'TRIMMED MEAN 10%: slandering'},
+		xAxis: {startOnTick: false,title: {text: 'values'}}
+    }
+
+    $scope.chartConfig09 = { options: {chart: {type: 'line'}}, series: [{ data: 0 }],
+        title: {text: 'WINSORIZED MEAN 5%: self-promoting'},
+		xAxis: {startOnTick: false,title: {text: 'values'}}
+    }
+    $scope.chartConfig10 = { options: {chart: {type: 'line'}}, series: [{ data: 0 }],
+        title: {text: 'WINSORIZED MEAN 5%: slandering'},
+		xAxis: {startOnTick: false,title: {text: 'values'}}
+    }
+
+    $scope.chartConfig11 = { options: {chart: {type: 'line'}}, series: [{ data: 0 }],
+        title: {text: 'WINSORIZED MEAN 10%: self-promoting'},
+		xAxis: {startOnTick: false,title: {text: 'values'}}
+    }
+    $scope.chartConfig12 = { options: {chart: {type: 'line'}}, series: [{ data: 0 }],
+        title: {text: 'WINSORIZED MEAN 10%: slandering'},
+		xAxis: {startOnTick: false,title: {text: 'values'}}
+    }*/
 
     /* Watchers for changes */
     $scope.$watchCollection('model.data', function(newNames, oldNames) {
 		$scope.model.dataAsNumberArray = $scope.toNumberArray($scope.model.data);
 	 	//$scope.model.expanded = $scope.expand();
 	 	$scope.model.total = $scope.arraySize($scope.model.data);
-	 	$scope.chartConfig.series[0].data = $scope.toNumberArray($scope.model.data);
+	 	
+	 	
 	 	//$scope.makeSelfPromoting();
 	 	//$scope.makeSlandering();
 	 	//$scope.makeSelfPromotingMetrics();
@@ -334,6 +357,38 @@ app.controller("AppCtrl", function ($scope) {
 	 	//$scope.makeExpandedInputsWithAttacks();
 	 	//$scope.makeMetricsOnExpandedInputsWithAttacks();
 	 	$scope.makeDiffsForMetrics($scope.model.min,$scope.model.max);
+
+	 	$scope.chartConfig01.series[0].data = $scope.model.spMetricDiff[0];
+	 	$scope.chartConfig01.series[1].data = $scope.model.slMetricDiff[0];
+
+	 	$scope.chartConfig02.series[0].data = $scope.model.spMetricDiff[1];
+	 	$scope.chartConfig02.series[1].data = $scope.model.slMetricDiff[1];
+
+	 	$scope.chartConfig03.series[0].data = $scope.model.spMetricDiff[2];
+	 	$scope.chartConfig03.series[1].data = $scope.model.slMetricDiff[2];
+
+	 	$scope.chartConfig04.series[0].data = $scope.model.spMetricDiff[3];
+	 	$scope.chartConfig04.series[1].data = $scope.model.slMetricDiff[3];
+
+	 	$scope.chartConfig05.series[0].data = $scope.model.spMetricDiff[4];
+	 	$scope.chartConfig05.series[1].data = $scope.model.slMetricDiff[4];
+
+	 	$scope.chartConfig06.series[0].data = $scope.model.spMetricDiff[5];
+	 	$scope.chartConfig06.series[1].data = $scope.model.slMetricDiff[5];
+
+
+	 	/*$scope.chartConfig03.series[0].data = $scope.model.spMetricDiff[1];
+	 	$scope.chartConfig04.series[0].data = $scope.model.slMetricDiff[1];
+
+	 	$scope.chartConfig05.series[0].data = $scope.model.spMetricDiff[2];
+	 	$scope.chartConfig06.series[0].data = $scope.model.slMetricDiff[2];
+	 	$scope.chartConfig07.series[0].data = $scope.model.spMetricDiff[3];
+	 	$scope.chartConfig08.series[0].data = $scope.model.slMetricDiff[3];
+
+	 	$scope.chartConfig09.series[0].data = $scope.model.spMetricDiff[4];
+	 	$scope.chartConfig10.series[0].data = $scope.model.slMetricDiff[4];
+	 	$scope.chartConfig11.series[0].data = $scope.model.spMetricDiff[5];
+	 	$scope.chartConfig12.series[0].data = $scope.model.slMetricDiff[5];*/
 	});
 });
 

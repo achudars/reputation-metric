@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container" ng-controller="AppCtrl">
 
     <div class='col-lg-12 col-md-12 col-sm-12'>
         <div class="panel panel-info">
@@ -77,11 +77,21 @@
             </div>
         </div>
     </div>
-    
-    <div class="col-lg-12 col-md-12 col-sm-12">
-        <div class="well">
-            <highchart id="chart1" config="chartConfig"></highchart>
-        </div>
+
+    <div>
+        <!-- MEAN -->
+        <div class="col-lg-6 col-md-6 col-sm-6"><div class="well"><highchart id="chart01" config="chartConfig01"></highchart></div></div>
+        <!-- MEDIAN -->
+        <div class="col-lg-6 col-md-6 col-sm-6"><div class="well"><highchart id="chart02" config="chartConfig02"></highchart></div></div>
+        <!-- TRIMMED MEAN 5% -->
+        <div class="col-lg-6 col-md-6 col-sm-6"><div class="well"><highchart id="chart03" config="chartConfig03"></highchart></div></div>
+        <!-- TRIMMED MEAN 10% -->
+        <div class="col-lg-6 col-md-6 col-sm-6"><div class="well"><highchart id="chart04" config="chartConfig04"></highchart></div></div>
+        <!-- WINSORIZED MEAN 5% -->
+        <div class="col-lg-6 col-md-6 col-sm-6"><div class="well"><highchart id="chart05" config="chartConfig05"></highchart></div></div>
+        <!-- WINSORIZED MEAN 10% -->
+        <div class="col-lg-6 col-md-6 col-sm-6"><div class="well"><highchart id="chart06" config="chartConfig06"></highchart></div></div>
+        
     </div>
 
 </div>
