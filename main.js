@@ -265,8 +265,8 @@ app.controller("AppCtrl", function ($scope) {
 
 			for (var i = 0; i < (spMetricsTransposed[key].length-1); i++) {
 
-				var spDiff = Number((spMetricsTransposed[key][i]-spMetricsTransposed[key][i+1]).toFixed(2));
-				var slDiff = Number((slMetricsTransposed[key][i]-slMetricsTransposed[key][i+1]).toFixed(2));
+				var spDiff = Number((spMetricsTransposed[key][0]-spMetricsTransposed[key][i+1]).toFixed(2));
+				var slDiff = Number((slMetricsTransposed[key][0]-slMetricsTransposed[key][i+1]).toFixed(2));
 				spTempArray.push(spDiff);
 				slTempArray.push(slDiff);
 			}
