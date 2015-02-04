@@ -14,6 +14,7 @@ app.controller("AppCtrl", function ($scope) {
 		dataAsNumberArray: [4,30,200,706,60],
 		magnitude: { min: 100, max: 200 },
 		expanded: [],
+		metricsOfExpanded: [],
 		total: 0,
 		spInput : [],
 		slInput : [],
@@ -57,7 +58,6 @@ app.controller("AppCtrl", function ($scope) {
 
 		var dataLength = arr.length;
 		var dataElements = arr;
-
 		var expandedArray = new Array();
 
 		for (var i = 0; i < dataLength; i++) {
@@ -83,7 +83,7 @@ app.controller("AppCtrl", function ($scope) {
 	$scope.getMean = function(arr){
 		var sum = $scope.getSumOfValues(arr);
 		// must be Number(), otherwise will be a string
-		// toFixed() regulates decimal places
+		// toFixed(2) regulates decimal places
 		return Number((sum/arr.length).toFixed(2));
 	}
 	/* function to get the median */
@@ -167,6 +167,17 @@ app.controller("AppCtrl", function ($scope) {
 
 	  return t;
 	};
+
+	$scope.makeMetricsOfExpanded = function(){
+		$scope.model.expanded = $scope.expand($scope.toNumberArray($scope.model.data));
+		var mean = $scope.getMean($scope.model.expanded);
+		var median = $scope.getMedian($scope.model.expanded);
+		var trimFive = $scope.getTrimmedMean($scope.model.expanded,5);
+		var trimTen = $scope.getTrimmedMean($scope.model.expanded,10);
+		var winFive = $scope.getWinsorizedMean($scope.model.expanded,5);
+		var winTen = $scope.getWinsorizedMean($scope.model.expanded,10);
+		$scope.model.metricsOfExpanded.push(mean,median,trimFive,trimTen,winFive,winTen);
+	}
 
 
 	/* STEP 1 */
@@ -263,10 +274,11 @@ app.controller("AppCtrl", function ($scope) {
 			var spTempArray = new Array();
 			var slTempArray = new Array();
 
-			for (var i = 0; i < (spMetricsTransposed[key].length-1); i++) {
+			for (var i = 0; i < (spMetricsTransposed[key].length); i++) {
+				
+				var spDiff = Number(($scope.model.metricsOfExpanded[key]-spMetricsTransposed[key][i]).toFixed(2));
+				var slDiff = Number(($scope.model.metricsOfExpanded[key]-slMetricsTransposed[key][i]).toFixed(2));
 
-				var spDiff = Number((spMetricsTransposed[key][0]-spMetricsTransposed[key][i+1]).toFixed(2));
-				var slDiff = Number((slMetricsTransposed[key][0]-slMetricsTransposed[key][i+1]).toFixed(2));
 				spTempArray.push(spDiff);
 				slTempArray.push(slDiff);
 			}
@@ -329,6 +341,7 @@ app.controller("AppCtrl", function ($scope) {
     	}
 
 		$scope.model.dataAsNumberArray = $scope.toNumberArray($scope.model.data);
+		$scope.makeMetricsOfExpanded();
 	 	$scope.handleRawInput();
 	 		
 	 	$scope.makeDiffsForMetrics($scope.model.magnitude.min,$scope.model.magnitude.max);
