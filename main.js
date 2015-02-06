@@ -12,7 +12,7 @@ app.controller("AppCtrl", function ($scope) {
 	$scope.model = {
 		data: "4,30,200,706,60",
 		dataAsNumberArray: [4,30,200,706,60],
-		magnitude: { min: 100, max: 200 },
+		magnitude: {},
 		expanded: [],
 		metricsOfExpanded: [],
 		total: 0,
@@ -22,8 +22,8 @@ app.controller("AppCtrl", function ($scope) {
 		slExpandedInput : [],
 		spMetrics : [],
 		slMetrics : [],
-		spMetricDiffs : [],
-		slMetricDiffs : [],
+		spMetricDiff : [],
+		slMetricDiff : [],
 		raw: ""
 	}
 
@@ -83,8 +83,8 @@ app.controller("AppCtrl", function ($scope) {
 	$scope.getMean = function(arr){
 		var sum = $scope.getSumOfValues(arr);
 		// must be Number(), otherwise will be a string
-		// toFixed(2) regulates decimal places
-		return Number((sum/arr.length).toFixed(2));
+		// toFixed(6) regulates decimal places
+		return Number((sum/arr.length).toFixed(4));
 	}
 	/* function to get the median */
 	$scope.getMedian = function(arr){
@@ -169,6 +169,7 @@ app.controller("AppCtrl", function ($scope) {
 	};
 
 	$scope.makeMetricsOfExpanded = function(){
+		$scope.model.metricsOfExpanded = [];
 		$scope.model.expanded = $scope.expand($scope.toNumberArray($scope.model.data));
 		var mean = $scope.getMean($scope.model.expanded);
 		var median = $scope.getMedian($scope.model.expanded);
@@ -186,9 +187,7 @@ app.controller("AppCtrl", function ($scope) {
 		$scope.model.spInput = {};
 		$scope.model.slInput = {};
 
-		var attackSize = $scope.model.max - $scope.model.magnitude.min;
-
-		for (var i = 0, votes = $scope.model.magnitude.min; votes < $scope.model.magnitude.max; i++, votes++) {
+		for (var i = 0, votes = $scope.model.magnitude.min; votes <= $scope.model.magnitude.max; i++, votes++) {
 			var spData = new Array();
 			var slData = new Array();
 
@@ -261,8 +260,17 @@ app.controller("AppCtrl", function ($scope) {
 
 	/* STEP 4 */
 	$scope.makeDiffsForMetrics = function(min,max){
+		
+		// RESET DATA
+		$scope.model.spInput = [];
+		$scope.model.slInput = [];
+		$scope.model.spExpandedInput = [];
+		$scope.model.slExpandedInput = [];
+		$scope.model.spMetrics = [];
+		$scope.model.slMetrics = [];
 		$scope.model.spMetricDiff = [];
 		$scope.model.slMetricDiff = [];
+
 		$scope.makeMetricsOnExpandedInputsWithAttacks();
 
 		var size = $scope.model.spMetrics[0].length; // as we have 6 metrics, this will be 6
@@ -276,16 +284,16 @@ app.controller("AppCtrl", function ($scope) {
 
 			for (var i = 0; i < (spMetricsTransposed[key].length); i++) {
 				
-				var spDiff = Number(($scope.model.metricsOfExpanded[key]-spMetricsTransposed[key][i]).toFixed(2));
-				var slDiff = Number(($scope.model.metricsOfExpanded[key]-slMetricsTransposed[key][i]).toFixed(2));
+				var spDiff = Number(($scope.model.metricsOfExpanded[key]-spMetricsTransposed[key][i]).toFixed(4));
+				var slDiff = Number(($scope.model.metricsOfExpanded[key]-slMetricsTransposed[key][i]).toFixed(4));
 
 				spTempArray.push(spDiff);
 				slTempArray.push(slDiff);
 			}
-			$scope.model.spMetricDiff[key] = spTempArray; // 6 array with diffs
-			$scope.model.slMetricDiff[key] = slTempArray; // 6 array with diffs
+			$scope.model.spMetricDiff[key] = spTempArray; // 6 arrays with diffs
+			$scope.model.slMetricDiff[key] = slTempArray; // 6 arrays with diffs
 		});
- 
+
 		//console.log("================= STEP 4 =================");
 		/*angular.forEach($scope.model.spMetricDiff, function(value, key) {
 			console.log($scope.model.spMetricDiff[key]);
@@ -297,56 +305,72 @@ app.controller("AppCtrl", function ($scope) {
 		$scope.model.raw = (""+$scope.model.total +","+ $scope.model.data +"\n"+ $scope.model.magnitude.min +","+ $scope.model.magnitude.max);
 	}
 
+	$scope.printResults = function(){
+		var numberOfAttacks = $scope.model.magnitude.min;
+		console.clear();
+		console.log("_______________________________________________");
+		console.log($scope.model.total + "," + $scope.model.data);
+	 	console.log($scope.model.magnitude.min + "," + $scope.model.magnitude.max);
+	 	console.warn($scope.model.metricsOfExpanded);
+	 	console.dir("Self-promoting [ i, δ1, δ2, δ3, δ4, δ5, δ6 ]: ");
+
+		angular.forEach($scope.model.spMetrics, function(value, key) {
+			var spTempArray = new Array();
+			for (var i = 0; i < ($scope.model.spMetrics[key].length); i++) {
+				var spDiff = Number(($scope.model.metricsOfExpanded[i]-$scope.model.spMetrics[key][i]).toFixed(4));
+				spTempArray.push(spDiff.toFixed(4));
+			}
+			console.info("[ " + numberOfAttacks++ + "," + spTempArray + " ]");
+		});
+
+		var numberOfAttacks = $scope.model.magnitude.min;
+		console.dir("Slandering [ i, δ1, δ2, δ3, δ4, δ5, δ6 ]: ");
+		angular.forEach($scope.model.slMetrics, function(value, key) {
+			var slTempArray = new Array();
+			for (var i = 0; i < ($scope.model.slMetrics[key].length); i++) {
+				var slDiff = Number(($scope.model.metricsOfExpanded[i]-$scope.model.slMetrics[key][i]).toFixed(4));
+				slTempArray.push(slDiff.toFixed(4));
+			}
+			console.info("[ " + numberOfAttacks++ + ", " + slTempArray + " ]");
+		});
+	}
+
 	/* Highcharts Config */
-	$scope.chartConfig01 = { options: {chart: {type: 'line'}}, series: [{ name: "mean: self-promoting", data: 0 },{ name: "mean: slandering", data: 0 }],
+	$scope.chartConfig01 = { options: {chart: {type: 'area'}}, series: [{ name: "mean: self-promoting", data: 0 },{ name: "mean: slandering", data: 0 }],
         title: {text: 'mean'},
 		xAxis: { gridLineWidth: 1, allowDecimals: false, startOnTick: false, title: {text: 'number of votes'}},
 		yAxis: { title: {text: "variance"}}
     }
-    $scope.chartConfig02 = { options: {chart: {type: 'line'}}, series: [{ name: "median: self-promoting", data: 0 },{ name: "median: slandering", data: 0 }],
+    $scope.chartConfig02 = { options: {chart: {type: 'area'}}, series: [{ name: "median: self-promoting", data: 0 },{ name: "median: slandering", data: 0 }],
         title: {text: 'median'},
 		xAxis: { gridLineWidth: 1, allowDecimals: false, startOnTick: false,title: {text: 'number of votes'}},
 		yAxis: { title: {text: "variance"}}
     }
 
-    $scope.chartConfig03 = { options: {chart: {type: 'line'}}, series: [{ name: "trimmed at 5%: self-promoting", data: 0 },{ name: "trimmed at 5%: slandering", data: 0 }],
+    $scope.chartConfig03 = { options: {chart: {type: 'area'}}, series: [{ name: "trimmed at 5%: self-promoting", data: 0 },{ name: "trimmed at 5%: slandering", data: 0 }],
         title: {text: 'trimmed at 5%'},
 		xAxis: { gridLineWidth: 1, allowDecimals: false, startOnTick: false,title: {text: 'number of votes'}},
 		yAxis: { title: {text: "variance"}}
     }
-    $scope.chartConfig04 = { options: {chart: {type: 'line'}}, series: [{ name: "trimmed at 10%: self-promoting", data: 0 },{ name: "trimmed at 10%: slandering", data: 0 }],
+    $scope.chartConfig04 = { options: {chart: {type: 'area'}}, series: [{ name: "trimmed at 10%: self-promoting", data: 0 },{ name: "trimmed at 10%: slandering", data: 0 }],
         title: {text: 'trimmed at 10%'},
 		xAxis: { gridLineWidth: 1, allowDecimals: false, startOnTick: false,title: {text: 'number of votes'}},
 		yAxis: { title: {text: "variance"}}
     }
 
-    $scope.chartConfig05 = { options: {chart: {type: 'line'}}, series: [{ name: "winsorized at 5%: self-promoting", data: 0 },{ name: "winsorized at 5%: slandering", data: 0 }],
+    $scope.chartConfig05 = { options: {chart: {type: 'area'}}, series: [{ name: "winsorized at 5%: self-promoting", data: 0 },{ name: "winsorized at 5%: slandering", data: 0 }],
         title: {text: 'winsorized at 5%'},
 		xAxis: { gridLineWidth: 1, allowDecimals: false, startOnTick: false,title: {text: 'number of votes'}},
 		yAxis: { title: {text: "variance"}}
     }
-    $scope.chartConfig06 = { options: {chart: {type: 'line'}}, series: [{ name: "winsorized at 10%: self-promoting", data: 0 },{ name: "winsorized at 10%: slandering", data: 0 }],
+    $scope.chartConfig06 = { options: {chart: {type: 'area'}}, series: [{ name: "winsorized at 10%: self-promoting", data: 0 },{ name: "winsorized at 10%: slandering", data: 0 }],
         title: {text: 'winsorized at 10%'},
 		xAxis: { gridLineWidth: 1, allowDecimals: false, startOnTick: false,title: {text: 'number of votes'}},
 		yAxis: { title: {text: "variance"}}
     }
 
-    /* Watchers for changes */
-    $scope.$watchGroup(['model.data','model.magnitude.min','model.magnitude.max','model.total'], function(newNames, oldNames) {
-
-    	$scope.model.total = $scope.arraySize($scope.model.data);
-
-    	if ($scope.model.magnitude.min >= $scope.model.magnitude.max) {
-    		$scope.model.magnitude.max += 1;
-    	}
-
-		$scope.model.dataAsNumberArray = $scope.toNumberArray($scope.model.data);
-		$scope.makeMetricsOfExpanded();
-	 	$scope.handleRawInput();
-	 		
-	 	$scope.makeDiffsForMetrics($scope.model.magnitude.min,$scope.model.magnitude.max);
-
-	 	$scope.chartConfig01.series[0].data = $scope.model.spMetricDiff[0];
+    $scope.updatePlots = function(){
+    	$scope.chartConfig01.series[0].data = $scope.model.spMetricDiff[0];
 	 	$scope.chartConfig01.series[1].data = $scope.model.slMetricDiff[0];
 
 	 	$scope.chartConfig02.series[0].data = $scope.model.spMetricDiff[1];
@@ -363,6 +387,26 @@ app.controller("AppCtrl", function ($scope) {
 
 	 	$scope.chartConfig06.series[0].data = $scope.model.spMetricDiff[5];
 	 	$scope.chartConfig06.series[1].data = $scope.model.slMetricDiff[5];
+    }
+    /* Watchers for changes */
+    $scope.$watchGroup(['model.data','model.magnitude.min','model.magnitude.max','model.total'], function(newNames, oldNames) {
+
+    	$scope.model.total = $scope.arraySize($scope.model.data);
+
+    	if ($scope.model.magnitude.min >= $scope.model.magnitude.max) {
+    		$scope.model.magnitude.max += 1;
+    	}
+
+		$scope.model.dataAsNumberArray = $scope.toNumberArray($scope.model.data);
+		$scope.makeMetricsOfExpanded();
+	 	$scope.handleRawInput();
+	 		
+	 	$scope.makeDiffsForMetrics($scope.model.magnitude.min,$scope.model.magnitude.max);
+
+	 	$scope.updatePlots();
+
+	 	$scope.printResults();
+
 	});
 
 });
