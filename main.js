@@ -1,4 +1,4 @@
-var app = angular.module("app", ['ngRoute','highcharts-ng']);
+var app = angular.module("app", ["ngRoute","highcharts-ng"]);
 
 app.config(function ($routeProvider) {
 	$routeProvider.when("/", {
@@ -27,6 +27,12 @@ app.controller("AppCtrl", function ($scope) {
 		raw: ""
 	}
 
+	$scope.magnitudes = [
+     	{ name: "small (5 - 10)",       min: 5,   max: 10    },
+		{ name: "medium (20 - 40)",     min: 20,  max: 40    },
+		{ name: "large (100 - 200)",    min: 100, max: 200   },
+		{ name: "extreme (10 - 10000)", min: 10,  max: 10000 }
+    ];
 	
 	/* function to get the size of an array from the input */
 	$scope.arraySize = function(data) {
@@ -335,41 +341,73 @@ app.controller("AppCtrl", function ($scope) {
 		});
 	}
 
+	
+	$scope.chartTypes = [
+     	{chart: {type: "column"},tooltip: "disabled"},
+		{chart: {type: "area"},tooltip: "disabled"},
+		{chart: {type: "line"},tooltip: "disabled"}
+
+		//,{chart: {type: "scatter"}}
+    ];
+    $scope.chartOptions = $scope.chartTypes[0];
+
+    $scope.xAxis = { gridLineWidth: 1, allowDecimals: false, startOnTick: false,title: {text: "range"}},
+	$scope.yAxis = { title: {text: "difference from the unattacked"}}
+
 	/* Highcharts Config */
-	$scope.chartConfig01 = { options: {chart: {type: 'area'}}, series: [{ name: "mean: self-promoting", data: 0 },{ name: "mean: slandering", data: 0 }],
-        title: {text: 'mean'},
-		xAxis: { gridLineWidth: 1, allowDecimals: false, startOnTick: false, title: {text: 'number of votes'}},
-		yAxis: { title: {text: "variance"}}
+	$scope.chartConfig01 = { //
+		series: [{ name: "mean: self-promoting", data: 0 },{ name: "mean: slandering", data: 0 }],
+        title: {text: "mean"},
+		xAxis: $scope.xAxis,
+		yAxis: $scope.yAxis,
+		tooltip: null
     }
-    $scope.chartConfig02 = { options: {chart: {type: 'area'}}, series: [{ name: "median: self-promoting", data: 0 },{ name: "median: slandering", data: 0 }],
-        title: {text: 'median'},
-		xAxis: { gridLineWidth: 1, allowDecimals: false, startOnTick: false,title: {text: 'number of votes'}},
-		yAxis: { title: {text: "variance"}}
+    $scope.chartConfig02 = { //
+    	series: [{ name: "median: self-promoting", data: 0 },{ name: "median: slandering", data: 0 }],
+        title: {text: "median"},
+		xAxis: $scope.xAxis,
+		yAxis: $scope.yAxis,
+		tooltip: null
     }
-
-    $scope.chartConfig03 = { options: {chart: {type: 'area'}}, series: [{ name: "trimmed at 5%: self-promoting", data: 0 },{ name: "trimmed at 5%: slandering", data: 0 }],
-        title: {text: 'trimmed at 5%'},
-		xAxis: { gridLineWidth: 1, allowDecimals: false, startOnTick: false,title: {text: 'number of votes'}},
-		yAxis: { title: {text: "variance"}}
+    $scope.chartConfig03 = { //
+    	series: [{ name: "trimmed at 5%: self-promoting", data: 0 },{ name: "trimmed at 5%: slandering", data: 0 }],
+        title: {text: "trimmed at 5%"},
+		xAxis: $scope.xAxis,
+		yAxis: $scope.yAxis,
+		tooltip: null
     }
-    $scope.chartConfig04 = { options: {chart: {type: 'area'}}, series: [{ name: "trimmed at 10%: self-promoting", data: 0 },{ name: "trimmed at 10%: slandering", data: 0 }],
-        title: {text: 'trimmed at 10%'},
-		xAxis: { gridLineWidth: 1, allowDecimals: false, startOnTick: false,title: {text: 'number of votes'}},
-		yAxis: { title: {text: "variance"}}
+    $scope.chartConfig04 = { //
+    	series: [{ name: "trimmed at 10%: self-promoting", data: 0 },{ name: "trimmed at 10%: slandering", data: 0 }],
+        title: {text: "trimmed at 10%"},
+		xAxis: $scope.xAxis,
+		yAxis: $scope.yAxis,
+		tooltip: null
     }
-
-    $scope.chartConfig05 = { options: {chart: {type: 'area'}}, series: [{ name: "winsorized at 5%: self-promoting", data: 0 },{ name: "winsorized at 5%: slandering", data: 0 }],
-        title: {text: 'winsorized at 5%'},
-		xAxis: { gridLineWidth: 1, allowDecimals: false, startOnTick: false,title: {text: 'number of votes'}},
-		yAxis: { title: {text: "variance"}}
+    $scope.chartConfig05 = { //
+    	series: [{ name: "winsorized at 5%: self-promoting", data: 0 },{ name: "winsorized at 5%: slandering", data: 0 }],
+        title: {text: "winsorized at 5%"},
+		xAxis: $scope.xAxis,
+		yAxis: $scope.yAxis,
+		tooltip: null
     }
-    $scope.chartConfig06 = { options: {chart: {type: 'area'}}, series: [{ name: "winsorized at 10%: self-promoting", data: 0 },{ name: "winsorized at 10%: slandering", data: 0 }],
-        title: {text: 'winsorized at 10%'},
-		xAxis: { gridLineWidth: 1, allowDecimals: false, startOnTick: false,title: {text: 'number of votes'}},
-		yAxis: { title: {text: "variance"}}
+    $scope.chartConfig06 = { //
+    	series: [{ name: "winsorized at 10%: self-promoting", data: 0 },{ name: "winsorized at 10%: slandering", data: 0 }],
+        title: {text: "winsorized at 10%"},
+		xAxis: $scope.xAxis,
+		yAxis: $scope.yAxis,
+		tooltip: null
     }
 
     $scope.updatePlots = function(){
+    	/* update chart type */
+    	$scope.chartConfig01.options = $scope.chartOptions;
+    	$scope.chartConfig02.options = $scope.chartOptions;
+    	$scope.chartConfig03.options = $scope.chartOptions;
+    	$scope.chartConfig04.options = $scope.chartOptions;
+    	$scope.chartConfig05.options = $scope.chartOptions;
+    	$scope.chartConfig06.options = $scope.chartOptions;
+
+    	/* update chart data */
     	$scope.chartConfig01.series[0].data = $scope.model.spMetricDiff[0];
 	 	$scope.chartConfig01.series[1].data = $scope.model.slMetricDiff[0];
 
@@ -389,7 +427,7 @@ app.controller("AppCtrl", function ($scope) {
 	 	$scope.chartConfig06.series[1].data = $scope.model.slMetricDiff[5];
     }
     /* Watchers for changes */
-    $scope.$watchGroup(['model.data','model.magnitude.min','model.magnitude.max','model.total'], function(newNames, oldNames) {
+    $scope.$watchGroup(["model.data","model.magnitude.min","model.magnitude.max","model.total","chartOptions"], function(newNames, oldNames) {
 
     	$scope.model.total = $scope.arraySize($scope.model.data);
 
