@@ -23,8 +23,7 @@ app.controller("AppCtrl", function ($scope) {
 		spMetrics : [],
 		slMetrics : [],
 		spMetricDiff : [],
-		slMetricDiff : [],
-		raw: ""
+		slMetricDiff : []
 	}
 
 	$scope.magnitudes = [
@@ -33,6 +32,8 @@ app.controller("AppCtrl", function ($scope) {
 		{ name: "large (100 - 200)",    min: 100, max: 200   },
 		{ name: "extreme (10 - 10000)", min: 10,  max: 10000 }
     ];
+
+    $scope.uploaded = "";
 	
 	/* function to get the size of an array from the input */
 	$scope.arraySize = function(data) {
@@ -307,10 +308,6 @@ app.controller("AppCtrl", function ($scope) {
 		});*/
 	}
 
-	$scope.handleRawInput = function(){
-		$scope.model.raw = (""+$scope.model.total +","+ $scope.model.data +"\n"+ $scope.model.magnitude.min +","+ $scope.model.magnitude.max);
-	}
-
 	$scope.printResults = function(){
 		var numberOfAttacks = $scope.model.magnitude.min;
 		console.clear();
@@ -429,6 +426,7 @@ app.controller("AppCtrl", function ($scope) {
     /* Watchers for changes */
     $scope.$watchGroup(["model.data","model.magnitude.min","model.magnitude.max","model.total","chartOptions"], function(newNames, oldNames) {
 
+    	console.log(typeof $scope.model.data);
     	$scope.model.total = $scope.arraySize($scope.model.data);
 
     	if ($scope.model.magnitude.min >= $scope.model.magnitude.max) {
@@ -437,7 +435,6 @@ app.controller("AppCtrl", function ($scope) {
 
 		$scope.model.dataAsNumberArray = $scope.toNumberArray($scope.model.data);
 		$scope.makeMetricsOfExpanded();
-	 	$scope.handleRawInput();
 	 		
 	 	$scope.makeDiffsForMetrics($scope.model.magnitude.min,$scope.model.magnitude.max);
 
@@ -447,5 +444,55 @@ app.controller("AppCtrl", function ($scope) {
 
 	});
 
+    // handle upload
+    $scope.handleUploadedFile = function(){
+		try {
+			console.log($scope.uploaded);
+			// replace plus or minus with a comma; escape newline and space; keep only digits
+			var removedText = $scope.uploaded.replace(/\+|\-/, ',').replace(/\t\s\r\n+/, '');
+			// set test to array
+			removedText = $scope.toNumberArray(removedText);
+			// remove first number (that denotoes the number of star range, e.g., 5 meaning from 1 to 5 stars)
+			removedText.shift();
+			// update model
+			var max = removedText.pop();
+			var min = removedText.pop();
+			// tell the user that magnitude is custom
+			$scope.magnitudes[4] = { name: "custom ( "+min+" - "+max+" )", min: min, max: max};
+			$scope.model.magnitude = $scope.magnitudes[4];
+
+			$scope.model.data = String(removedText);
+
+		} catch(err) {
+			console.log("No file uploaded or bad file. Details: " + err);
+		}
+	}
+    // watch for upload
+	$scope.$watch('uploaded', function(newValue, oldValue) {
+	 	if ($scope.uploaded.length > 0){
+	 		$scope.handleUploadedFile();
+	 	}	
+	});
+
 });
 
+
+
+app.directive("uploaded", [function () {
+    return {
+        scope: {
+            uploaded: "="
+        },
+        link: function (scope, element, attributes) {
+            element.bind("change", function (changeEvent) {
+                var reader = new FileReader();
+                reader.onload = function (loadEvent) {
+                    scope.$apply(function () {
+                        scope.uploaded = loadEvent.target.result;
+                    });
+                }
+                reader.readAsText(changeEvent.target.files[0]);
+            });
+        }
+    }
+}]);
