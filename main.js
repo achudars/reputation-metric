@@ -27,13 +27,13 @@ app.controller("AppCtrl", function ($scope) {
 	}
 
 	$scope.magnitudes = [
-     	{ name: "small (5 - 10)",       min: 5,   max: 10    },
+		{ name: "small (5 - 10)",       min: 5,   max: 10    },
 		{ name: "medium (20 - 40)",     min: 20,  max: 40    },
 		{ name: "large (100 - 200)",    min: 100, max: 200   },
 		{ name: "extreme (10 - 10000)", min: 10,  max: 10000 }
-    ];
+	];
 
-    $scope.uploaded = "";
+	$scope.uploaded = "";
 	
 	/* function to get the size of an array from the input */
 	$scope.arraySize = function(data) {
@@ -50,14 +50,14 @@ app.controller("AppCtrl", function ($scope) {
 		var numberArray = new Array();
 		numberArray = data.split(",");
 		for (a in numberArray ) {
-		    numberArray[a] = parseInt(numberArray[a], 10);
+			numberArray[a] = parseInt(numberArray[a], 10);
 		}
 		return numberArray;
 	}
 
 	/* function to get numbered values for ngRepeat */
 	$scope.getNumber = function(num) {
-	    return new Array(num);   
+		return new Array(num);   
 	}
 
 	/* function to expand the initial input into full distribution */
@@ -80,7 +80,7 @@ app.controller("AppCtrl", function ($scope) {
 	$scope.getSumOfValues = function(arr){
 		var total = 0;
 		$.each(arr,function() {
-	    	total += this;
+			total += this;
 		});
 		return total;
 	}
@@ -97,12 +97,12 @@ app.controller("AppCtrl", function ($scope) {
 	$scope.getMedian = function(arr){
 		arr.sort( function(a,b) {return a - b;} );
 
-	    var half = Math.floor(arr.length/2);
+		var half = Math.floor(arr.length/2);
 
-	    if(arr.length % 2)
-	        return arr[half];
-	    else
-	        return (arr[half-1] + arr[half]) / 2.0;
+		if(arr.length % 2)
+			return arr[half];
+		else
+			return (arr[half-1] + arr[half]) / 2.0;
 	}
 
 	$scope.trimArray = function(arr,percent){
@@ -146,7 +146,7 @@ app.controller("AppCtrl", function ($scope) {
 
 	  // Calculate the width and height of the Array
 	  var w = arr.length ? arr.length : 0,
-	    h = arr[0] instanceof Array ? arr[0].length : 0;
+		h = arr[0] instanceof Array ? arr[0].length : 0;
 
 	  // In case it is a zero matrix, no transpose routine needed.
 	  if(h === 0 || w === 0) { return []; }
@@ -161,15 +161,15 @@ app.controller("AppCtrl", function ($scope) {
 	  // Loop through every item in the outer array (height)
 	  for(i=0; i<h; i++) {
 
-	    // Insert a new row (array)
-	    t[i] = [];
+		// Insert a new row (array)
+		t[i] = [];
 
-	    // Loop through every item per item in outer array (width)
-	    for(j=0; j<w; j++) {
+		// Loop through every item per item in outer array (width)
+		for(j=0; j<w; j++) {
 
-	      // Save transposed data.
-	      t[i][j] = arr[j][i];
-	    }
+		  // Save transposed data.
+		  t[i][j] = arr[j][i];
+		}
 	  }
 
 	  return t;
@@ -198,11 +198,11 @@ app.controller("AppCtrl", function ($scope) {
 			var spData = new Array();
 			var slData = new Array();
 
-			    spData = $scope.toNumberArray($scope.model.data);
-			    slData = $scope.toNumberArray($scope.model.data);
-			    
-			    spData[spData.length-1] += votes; // self-promoting votes
-			    slData[0] += votes;				  // slandering votes	
+				spData = $scope.toNumberArray($scope.model.data);
+				slData = $scope.toNumberArray($scope.model.data);
+				
+				spData[spData.length-1] += votes; // self-promoting votes
+				slData[0] += votes;				  // slandering votes	
 
 			$scope.model.spInput[i] = spData;
 			$scope.model.slInput[i] = slData;
@@ -222,8 +222,8 @@ app.controller("AppCtrl", function ($scope) {
 		$scope.makeInputsWithAttacks();
 
 		angular.forEach($scope.model.spInput, function(value, key) {
-		 	$scope.model.spExpandedInput[key] = $scope.expand($scope.model.spInput[key]);
-		 	$scope.model.slExpandedInput[key] = $scope.expand($scope.model.slInput[key]);
+			$scope.model.spExpandedInput[key] = $scope.expand($scope.model.spInput[key]);
+			$scope.model.slExpandedInput[key] = $scope.expand($scope.model.slInput[key]);
 		});
  
 		//console.log("================= STEP 2 =================");
@@ -240,7 +240,7 @@ app.controller("AppCtrl", function ($scope) {
 
 		angular.forEach($scope.model.spExpandedInput, function(value, key) {
 
-		 	var spMean = $scope.getMean($scope.model.spExpandedInput[key]);
+			var spMean = $scope.getMean($scope.model.spExpandedInput[key]);
 			var spMedian = $scope.getMedian($scope.model.spExpandedInput[key]);
 			var spTrimFive = $scope.getTrimmedMean($scope.model.spExpandedInput[key],5);
 			var spTrimTen = $scope.getTrimmedMean($scope.model.spExpandedInput[key],10);
@@ -254,8 +254,8 @@ app.controller("AppCtrl", function ($scope) {
 			var slWinFive = $scope.getWinsorizedMean($scope.model.slExpandedInput[key],5);
 			var slWinTen = $scope.getWinsorizedMean($scope.model.slExpandedInput[key],10);
 
-		 	$scope.model.spMetrics[key] = [spMean,spMedian,spTrimFive,spTrimTen,spWinFive,spWinTen];
-		 	$scope.model.slMetrics[key] = [slMean,slMedian,slTrimFive,slTrimTen,slWinFive,slWinTen];
+			$scope.model.spMetrics[key] = [spMean,spMedian,spTrimFive,spTrimTen,spWinFive,spWinTen];
+			$scope.model.slMetrics[key] = [slMean,slMedian,slTrimFive,slTrimTen,slWinFive,slWinTen];
 		});
  
 		//console.log("================= STEP 3 =================");
@@ -291,8 +291,8 @@ app.controller("AppCtrl", function ($scope) {
 
 			for (var i = 0; i < (spMetricsTransposed[key].length); i++) {
 				
-				var spDiff = Number(($scope.model.metricsOfExpanded[key]-spMetricsTransposed[key][i]).toFixed(4));
-				var slDiff = Number(($scope.model.metricsOfExpanded[key]-slMetricsTransposed[key][i]).toFixed(4));
+				var spDiff = Number((spMetricsTransposed[key][i]-$scope.model.metricsOfExpanded[key]).toFixed(4));
+				var slDiff = Number((slMetricsTransposed[key][i]-$scope.model.metricsOfExpanded[key]).toFixed(4));
 
 				spTempArray.push(spDiff);
 				slTempArray.push(slDiff);
@@ -313,14 +313,14 @@ app.controller("AppCtrl", function ($scope) {
 		console.clear();
 		console.log("_______________________________________________");
 		console.log($scope.model.total + "," + $scope.model.data);
-	 	console.log($scope.model.magnitude.min + "," + $scope.model.magnitude.max);
-	 	console.warn($scope.model.metricsOfExpanded);
-	 	console.dir("Self-promoting [ i, δ1, δ2, δ3, δ4, δ5, δ6 ]: ");
+		console.log($scope.model.magnitude.min + "," + $scope.model.magnitude.max);
+		console.warn($scope.model.metricsOfExpanded);
+		console.dir("Self-promoting [ i, δ1, δ2, δ3, δ4, δ5, δ6 ]: ");
 
 		angular.forEach($scope.model.spMetrics, function(value, key) {
 			var spTempArray = new Array();
 			for (var i = 0; i < ($scope.model.spMetrics[key].length); i++) {
-				var spDiff = Number(($scope.model.metricsOfExpanded[i]-$scope.model.spMetrics[key][i]).toFixed(4));
+				var spDiff = Number(($scope.model.spMetrics[key][i]-$scope.model.metricsOfExpanded[i]).toFixed(4));
 				spTempArray.push(spDiff.toFixed(4));
 			}
 			console.info("[ " + numberOfAttacks++ + "," + spTempArray + " ]");
@@ -331,7 +331,7 @@ app.controller("AppCtrl", function ($scope) {
 		angular.forEach($scope.model.slMetrics, function(value, key) {
 			var slTempArray = new Array();
 			for (var i = 0; i < ($scope.model.slMetrics[key].length); i++) {
-				var slDiff = Number(($scope.model.metricsOfExpanded[i]-$scope.model.slMetrics[key][i]).toFixed(4));
+				var slDiff = Number(($scope.model.slMetrics[key][i]-$scope.model.metricsOfExpanded[i]).toFixed(4));
 				slTempArray.push(slDiff.toFixed(4));
 			}
 			console.info("[ " + numberOfAttacks++ + ", " + slTempArray + " ]");
@@ -340,112 +340,112 @@ app.controller("AppCtrl", function ($scope) {
 
 	
 	$scope.chartTypes = [
-     	{chart: {type: "column"},tooltip: "disabled"},
+		{chart: {type: "column"},tooltip: "disabled"},
 		{chart: {type: "area"},tooltip: "disabled"},
 		{chart: {type: "line"},tooltip: "disabled"}
 
 		//,{chart: {type: "scatter"}}
-    ];
-    $scope.chartOptions = $scope.chartTypes[0];
+	];
+	$scope.chartOptions = $scope.chartTypes[0];
 
-    $scope.xAxis = { gridLineWidth: 1, allowDecimals: false, startOnTick: false,title: {text: "range"}},
+	$scope.xAxis = { gridLineWidth: 1, allowDecimals: false, startOnTick: false,title: {text: "range"}},
 	$scope.yAxis = { title: {text: "difference from the unattacked"}}
 
 	/* Highcharts Config */
 	$scope.chartConfig01 = { //
 		series: [{ name: "mean: self-promoting", data: 0 },{ name: "mean: slandering", data: 0 }],
-        title: {text: "mean"},
+		title: {text: "mean"},
 		xAxis: $scope.xAxis,
 		yAxis: $scope.yAxis,
 		tooltip: null
-    }
-    $scope.chartConfig02 = { //
-    	series: [{ name: "median: self-promoting", data: 0 },{ name: "median: slandering", data: 0 }],
-        title: {text: "median"},
+	}
+	$scope.chartConfig02 = { //
+		series: [{ name: "median: self-promoting", data: 0 },{ name: "median: slandering", data: 0 }],
+		title: {text: "median"},
 		xAxis: $scope.xAxis,
 		yAxis: $scope.yAxis,
 		tooltip: null
-    }
-    $scope.chartConfig03 = { //
-    	series: [{ name: "trimmed at 5%: self-promoting", data: 0 },{ name: "trimmed at 5%: slandering", data: 0 }],
-        title: {text: "trimmed at 5%"},
+	}
+	$scope.chartConfig03 = { //
+		series: [{ name: "trimmed at 5%: self-promoting", data: 0 },{ name: "trimmed at 5%: slandering", data: 0 }],
+		title: {text: "trimmed at 5%"},
 		xAxis: $scope.xAxis,
 		yAxis: $scope.yAxis,
 		tooltip: null
-    }
-    $scope.chartConfig04 = { //
-    	series: [{ name: "trimmed at 10%: self-promoting", data: 0 },{ name: "trimmed at 10%: slandering", data: 0 }],
-        title: {text: "trimmed at 10%"},
+	}
+	$scope.chartConfig04 = { //
+		series: [{ name: "trimmed at 10%: self-promoting", data: 0 },{ name: "trimmed at 10%: slandering", data: 0 }],
+		title: {text: "trimmed at 10%"},
 		xAxis: $scope.xAxis,
 		yAxis: $scope.yAxis,
 		tooltip: null
-    }
-    $scope.chartConfig05 = { //
-    	series: [{ name: "winsorized at 5%: self-promoting", data: 0 },{ name: "winsorized at 5%: slandering", data: 0 }],
-        title: {text: "winsorized at 5%"},
+	}
+	$scope.chartConfig05 = { //
+		series: [{ name: "winsorized at 5%: self-promoting", data: 0 },{ name: "winsorized at 5%: slandering", data: 0 }],
+		title: {text: "winsorized at 5%"},
 		xAxis: $scope.xAxis,
 		yAxis: $scope.yAxis,
 		tooltip: null
-    }
-    $scope.chartConfig06 = { //
-    	series: [{ name: "winsorized at 10%: self-promoting", data: 0 },{ name: "winsorized at 10%: slandering", data: 0 }],
-        title: {text: "winsorized at 10%"},
+	}
+	$scope.chartConfig06 = { //
+		series: [{ name: "winsorized at 10%: self-promoting", data: 0 },{ name: "winsorized at 10%: slandering", data: 0 }],
+		title: {text: "winsorized at 10%"},
 		xAxis: $scope.xAxis,
 		yAxis: $scope.yAxis,
 		tooltip: null
-    }
+	}
 
-    $scope.updatePlots = function(){
-    	/* update chart type */
-    	$scope.chartConfig01.options = $scope.chartOptions;
-    	$scope.chartConfig02.options = $scope.chartOptions;
-    	$scope.chartConfig03.options = $scope.chartOptions;
-    	$scope.chartConfig04.options = $scope.chartOptions;
-    	$scope.chartConfig05.options = $scope.chartOptions;
-    	$scope.chartConfig06.options = $scope.chartOptions;
+	$scope.updatePlots = function(){
+		/* update chart type */
+		$scope.chartConfig01.options = $scope.chartOptions;
+		$scope.chartConfig02.options = $scope.chartOptions;
+		$scope.chartConfig03.options = $scope.chartOptions;
+		$scope.chartConfig04.options = $scope.chartOptions;
+		$scope.chartConfig05.options = $scope.chartOptions;
+		$scope.chartConfig06.options = $scope.chartOptions;
 
-    	/* update chart data */
-    	$scope.chartConfig01.series[0].data = $scope.model.spMetricDiff[0];
-	 	$scope.chartConfig01.series[1].data = $scope.model.slMetricDiff[0];
+		/* update chart data */
+		$scope.chartConfig01.series[0].data = $scope.model.spMetricDiff[0];
+		$scope.chartConfig01.series[1].data = $scope.model.slMetricDiff[0];
 
-	 	$scope.chartConfig02.series[0].data = $scope.model.spMetricDiff[1];
-	 	$scope.chartConfig02.series[1].data = $scope.model.slMetricDiff[1];
+		$scope.chartConfig02.series[0].data = $scope.model.spMetricDiff[1];
+		$scope.chartConfig02.series[1].data = $scope.model.slMetricDiff[1];
 
-	 	$scope.chartConfig03.series[0].data = $scope.model.spMetricDiff[2];
-	 	$scope.chartConfig03.series[1].data = $scope.model.slMetricDiff[2];
+		$scope.chartConfig03.series[0].data = $scope.model.spMetricDiff[2];
+		$scope.chartConfig03.series[1].data = $scope.model.slMetricDiff[2];
 
-	 	$scope.chartConfig04.series[0].data = $scope.model.spMetricDiff[3];
-	 	$scope.chartConfig04.series[1].data = $scope.model.slMetricDiff[3];
+		$scope.chartConfig04.series[0].data = $scope.model.spMetricDiff[3];
+		$scope.chartConfig04.series[1].data = $scope.model.slMetricDiff[3];
 
-	 	$scope.chartConfig05.series[0].data = $scope.model.spMetricDiff[4];
-	 	$scope.chartConfig05.series[1].data = $scope.model.slMetricDiff[4];
+		$scope.chartConfig05.series[0].data = $scope.model.spMetricDiff[4];
+		$scope.chartConfig05.series[1].data = $scope.model.slMetricDiff[4];
 
-	 	$scope.chartConfig06.series[0].data = $scope.model.spMetricDiff[5];
-	 	$scope.chartConfig06.series[1].data = $scope.model.slMetricDiff[5];
-    }
-    /* Watchers for changes */
-    $scope.$watchGroup(["model.data","model.magnitude.min","model.magnitude.max","model.total","chartOptions"], function(newNames, oldNames) {
+		$scope.chartConfig06.series[0].data = $scope.model.spMetricDiff[5];
+		$scope.chartConfig06.series[1].data = $scope.model.slMetricDiff[5];
+	}
+	/* Watchers for changes */
+	$scope.$watchGroup(["model.data","model.magnitude.min","model.magnitude.max","model.total","chartOptions"], function(newNames, oldNames) {
 
-    	console.log(typeof $scope.model.data);
-    	$scope.model.total = $scope.arraySize($scope.model.data);
+		console.log(typeof $scope.model.data);
+		$scope.model.total = $scope.arraySize($scope.model.data);
 
-    	if ($scope.model.magnitude.min >= $scope.model.magnitude.max) {
-    		$scope.model.magnitude.max += 1;
-    	}
+		if ($scope.model.magnitude.min >= $scope.model.magnitude.max) {
+			$scope.model.magnitude.max += 1;
+		}
 
 		$scope.model.dataAsNumberArray = $scope.toNumberArray($scope.model.data);
 		$scope.makeMetricsOfExpanded();
-	 		
-	 	$scope.makeDiffsForMetrics($scope.model.magnitude.min,$scope.model.magnitude.max);
+			
+		$scope.makeDiffsForMetrics($scope.model.magnitude.min,$scope.model.magnitude.max);
 
-	 	$scope.updatePlots();
+		$scope.updatePlots();
 
-	 	$scope.printResults();
+		$scope.printResults();
 
 	});
 
-    // handle upload
-    $scope.handleUploadedFile = function(){
+	// handle upload
+	$scope.handleUploadedFile = function(){
 		try {
 			console.log($scope.uploaded);
 			// replace plus or minus with a comma; escape newline and space; keep only digits
@@ -467,11 +467,11 @@ app.controller("AppCtrl", function ($scope) {
 			console.log("No file uploaded or bad file. Details: " + err);
 		}
 	}
-    // watch for upload
+	// watch for upload
 	$scope.$watch('uploaded', function(newValue, oldValue) {
-	 	if ($scope.uploaded.length > 0){
-	 		$scope.handleUploadedFile();
-	 	}	
+		if ($scope.uploaded.length > 0){
+			$scope.handleUploadedFile();
+		}	
 	});
 
 });
@@ -479,20 +479,20 @@ app.controller("AppCtrl", function ($scope) {
 
 
 app.directive("uploaded", [function () {
-    return {
-        scope: {
-            uploaded: "="
-        },
-        link: function (scope, element, attributes) {
-            element.bind("change", function (changeEvent) {
-                var reader = new FileReader();
-                reader.onload = function (loadEvent) {
-                    scope.$apply(function () {
-                        scope.uploaded = loadEvent.target.result;
-                    });
-                }
-                reader.readAsText(changeEvent.target.files[0]);
-            });
-        }
-    }
+	return {
+		scope: {
+			uploaded: "="
+		},
+		link: function (scope, element, attributes) {
+			element.bind("change", function (changeEvent) {
+				var reader = new FileReader();
+				reader.onload = function (loadEvent) {
+					scope.$apply(function () {
+						scope.uploaded = loadEvent.target.result;
+					});
+				}
+				reader.readAsText(changeEvent.target.files[0]);
+			});
+		}
+	}
 }]);
