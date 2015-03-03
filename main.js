@@ -348,8 +348,8 @@ app.controller("AppCtrl", function ($scope) {
 	];
 	$scope.chartOptions = $scope.chartTypes[0];
 
-	$scope.xAxis = { gridLineWidth: 1, allowDecimals: false, startOnTick: false,title: {text: "range"}},
-	$scope.yAxis = { title: {text: "difference from the unattacked"}}
+	$scope.xAxis = { gridLineWidth: 1, allowDecimals: false, startOnTick: false,title: {text: "number of attacks"}},
+	$scope.yAxis = { title: {text: "change to rating"}}
 
 	/* Highcharts Config */
 	$scope.chartConfig01 = { //
