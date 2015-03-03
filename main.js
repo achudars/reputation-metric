@@ -314,7 +314,7 @@ app.controller("AppCtrl", function ($scope) {
 		console.log("_______________________________________________");
 		console.log("Input: " + $scope.model.total + "," + $scope.model.data);
 		console.log("Magnitude: " + $scope.model.magnitude.min + "," + $scope.model.magnitude.max);
-		console.warn("[ " + $scope.model.metricsOfExpanded + " ]");
+		console.warn("Metrics without attacks: [ " + $scope.model.metricsOfExpanded + " ]");
 		console.dir("Self-promoting [ i, δ1, δ2, δ3, δ4, δ5, δ6 ]: ");
 
 		angular.forEach($scope.model.spMetrics, function(value, key) {
