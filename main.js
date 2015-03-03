@@ -178,12 +178,12 @@ app.controller("AppCtrl", function ($scope) {
 	$scope.makeMetricsOfExpanded = function(){
 		$scope.model.metricsOfExpanded = [];
 		$scope.model.expanded = $scope.expand($scope.toNumberArray($scope.model.data));
-		var mean = $scope.getMean($scope.model.expanded);
-		var median = $scope.getMedian($scope.model.expanded);
-		var trimFive = $scope.getTrimmedMean($scope.model.expanded,5);
-		var trimTen = $scope.getTrimmedMean($scope.model.expanded,10);
-		var winFive = $scope.getWinsorizedMean($scope.model.expanded,5);
-		var winTen = $scope.getWinsorizedMean($scope.model.expanded,10);
+		var mean = Number($scope.getMean($scope.model.expanded).toFixed(4));
+		var median = Number($scope.getMedian($scope.model.expanded).toFixed(4));
+		var trimFive = Number($scope.getTrimmedMean($scope.model.expanded,5).toFixed(4));
+		var trimTen = Number($scope.getTrimmedMean($scope.model.expanded,10).toFixed(4));
+		var winFive = Number($scope.getWinsorizedMean($scope.model.expanded,5).toFixed(4));
+		var winTen = Number($scope.getWinsorizedMean($scope.model.expanded,10).toFixed(4));
 		$scope.model.metricsOfExpanded.push(mean,median,trimFive,trimTen,winFive,winTen);
 	}
 
@@ -314,7 +314,7 @@ app.controller("AppCtrl", function ($scope) {
 		console.log("_______________________________________________");
 		console.log($scope.model.total + "," + $scope.model.data);
 		console.log($scope.model.magnitude.min + "," + $scope.model.magnitude.max);
-		console.warn($scope.model.metricsOfExpanded);
+		console.warn("[ " + $scope.model.metricsOfExpanded + " ]");
 		console.dir("Self-promoting [ i, δ1, δ2, δ3, δ4, δ5, δ6 ]: ");
 
 		angular.forEach($scope.model.spMetrics, function(value, key) {
